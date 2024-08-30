@@ -1,0 +1,14 @@
+{
+  "global": {
+    "path_packages": "packages",
+    "debug": true
+  },
+  "libraries": [
+    {
+      "url": "lua-ulf/ulf.testmod1"
+    },
+    {
+      "url": "lua-ulf/ulf.testmod2"
+    }
+  ]
+}
