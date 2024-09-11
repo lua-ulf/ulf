@@ -1,26 +1,29 @@
 ---@diagnostic disable:lowercase-global
 
 rockspec_format = "3.0"
-package = "loom"
+package = "ulf"
 version = "scm-1"
 source = {
 	url = "https://github.com/shborg-lua/loom/archive/refs/tags/scm-1.zip",
 }
 
 description = {
-	summary = "Tool for managing Lua monorepos",
-	detailed = "`loom` is a tool designed for managing and organizing Lua monorepos, built on top of LuaRocks.",
-	homepage = "http://github.com/shborg-lua/loom",
+	summary = "ULF is a modular framework for Lua designed to provide developers with an intuitive API for development in Neovim and Luajit.",
+	detailed = [[
+  AI says: ULF is a modular, asynchronous framework for Lua designed to provide developers with a flexible, powerful, and 
+  intuitive API for development in Neovim and Luajit. The framework uses luv as its backend and implements the 
+  Async/Await pattern by default.
+  ]],
+	homepage = "http://github.com/lua-ulf/ulf",
 	license = "MIT",
 }
 
 dependencies = {
 	"lua >= 5.1",
-	"lua-cjson",
+	"luv",
 	"inspect",
-	"lua_cliargs",
 	"luafilesystem",
-	"dkjson",
+	"cjson",
 }
 build = {
 	type = "builtin",
