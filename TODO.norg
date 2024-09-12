@@ -1,0 +1,16 @@
+* ULF Todo
+
+  Below is a list of all todos
+
+** Bootstrap Library
+
+   We need a small library which provides functions for loading the framework.
+   See ulf.doc, ulf.log which all use some utils which can be bundled.
+
+   - ( ) Bootstrap tasks
+   -- ( ) provide functions for loading modules.
+          Take a look at luvit, they have this stuff implemented.
+   --- ( ) table manipulation: merging, copying
+   --- ( ) string manipulation: split, trim and so on
+
+
