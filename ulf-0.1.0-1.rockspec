@@ -27,9 +27,18 @@ dependencies = {
 }
 build = {
 	type = "builtin",
-	modules = {},
-	copy_directories = {},
 	platforms = {},
+	modules = {
+		["ulf.log"] = "deps/ulf.log/lua/ulf/log",
+	},
+	install = {
+		bin = {
+			gendocs = "deps/ulf.doc/bin/gendocs",
+		},
+	},
+	copy_directories = {
+		"examples",
+	},
 }
 test_dependencies = {
 	"busted",

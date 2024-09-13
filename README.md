@@ -15,4 +15,7 @@ git remote add -f ulf-log-upstream git@github.com:lua-ulf/ulf.log.git
 
 # 2 setup subtree
 git subtree add --prefix deps/ulf.log ulf-log-upstream main --squash
+
+# 3 push
+git subtree push --prefix=deps/ulf.log ulf-log-upstream main
 ```
