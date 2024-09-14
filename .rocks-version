@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Find the latest version of the rockspec file
-current_rocks=$(ls loom-?*.?*.?*-?*.rockspec 2>/dev/null | sort -V | tail -n 1)
+current_rocks=$(ls ulf-?*.?*.?*-?*.rockspec 2>/dev/null | sort -V | tail -n 1)
 
 # Check if the file exists
 if [[ -z "$current_rocks" ]]; then
@@ -11,7 +11,7 @@ fi
 
 # Extract version or revision based on the input argument
 if [[ "$1" == "ver" ]]; then
-  if [[ "$current_rocks" =~ ^loom-([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)\.rockspec$ ]]; then
+  if [[ "$current_rocks" =~ ^ulf-([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)\.rockspec$ ]]; then
     export ROCKS_PACKAGE_VERSION=${BASH_REMATCH[1]}
     echo "$ROCKS_PACKAGE_VERSION"
   else
@@ -19,7 +19,7 @@ if [[ "$1" == "ver" ]]; then
     exit 1
   fi
 elif [[ "$1" == "rev" ]]; then
-  if [[ "$current_rocks" =~ ^loom-([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)\.rockspec$ ]]; then
+  if [[ "$current_rocks" =~ ^ulf-([0-9]+\.[0-9]+\.[0-9]+)-([0-9]+)\.rockspec$ ]]; then
     export ROCKS_PACKAGE_REVISION=${BASH_REMATCH[2]}
     echo "$ROCKS_PACKAGE_REVISION"
   else

@@ -9,30 +9,21 @@ return {
 	default = {
 		tags = {
 			"tests",
-			"unit",
+			"integration",
 			"ulf",
-			"ulf.config",
-			"ulf.utils",
+			"ulf.core",
 		},
 		output = "htest",
 		verbose = true,
-		-- ["exclude-pattern"] = "sum_spec", -- do not run spec files inside fixture
-		-- helper = "spec.util.test_env",
-		-- ["auto-insulate"] = false,
 		ROOT = { "spec/tests" },
 	},
 	tests = {
-		tags = { "tests", "unit", "integration" },
+		tags = { "tests", "ulf" },
 		ROOT = { "spec/tests" },
 		verbose = true,
 	},
 	integration = {
 		tags = "integration",
-		ROOT = { "spec/tests" },
-		verbose = true,
-	},
-	unit = {
-		tags = "unit",
 		ROOT = { "spec/tests" },
 		verbose = true,
 	},
@@ -42,13 +33,8 @@ return {
 		ROOT = { "spec/tests" },
 		verbose = true,
 	},
-	["ulf.utils"] = {
-		tags = "ulf.utils",
-		ROOT = { "spec/tests" },
-		verbose = true,
-	},
-	["ulf.config"] = {
-		tags = "ulf.config",
+	["ulf.core"] = {
+		tags = "ulf.core",
 		ROOT = { "spec/tests" },
 		verbose = true,
 	},

@@ -23,19 +23,23 @@ dependencies = {
 	"luv",
 	"inspect",
 	"luafilesystem",
-	"cjson",
+	-- "cjson", -- have problems to install under luajit
+	"dkjson",
+	"tabular",
 }
 build = {
 	type = "builtin",
 	platforms = {},
-	modules = {
-		["ulf.log"] = "deps/ulf.log/lua/ulf/log",
-	},
-	install = {
-		bin = {
-			gendocs = "deps/ulf.doc/bin/gendocs",
-		},
-	},
+	-- modules = {
+	-- 	["ulf"] = "deps/ulf.core/lua/ulf/core",
+	-- 	["ulf.doc"] = "deps/ulf.log/lua/ulf/doc",
+	-- 	["ulf.log"] = "deps/ulf.log/lua/ulf/log",
+	-- },
+	-- install = {
+	-- 	bin = {
+	-- 		gendocs = "deps/ulf.doc/bin/gendocs",
+	-- 	},
+	-- },
 	copy_directories = {
 		"examples",
 	},
