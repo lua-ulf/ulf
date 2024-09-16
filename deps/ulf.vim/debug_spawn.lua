@@ -4,7 +4,7 @@ local P = function(s)
 	return print(require("ulf.lib.inspect")(s))
 end
 local function test_1()
-	local VimProcess = require("ulf.vim.spawn").VimProcess
+	local VimProcess = require("ulf.vim.remote.spawn").VimProcess
 
 	local proc = VimProcess()
 
@@ -16,7 +16,7 @@ local function test_1()
 	P(proc.api.nvim_get_all_options_info())
 
 	if proc:is_running() then
-		P(proc.loop.cwd())
+		P(proc.uv.cwd())
 	end
 end
 

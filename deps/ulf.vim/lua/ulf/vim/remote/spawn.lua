@@ -1,17 +1,19 @@
 ---@class ulf.vim.spawn
 local M = {}
 
+local Logger = require("ulf.vim.log").Logger:get("spawn")
+
 _G.P = require("ulf.util.debug").debug_print
 
 local uv = vim.uv
 local H = {}
 
 H.error = function(s)
-	print(s)
+	Logger.error(s)
 end
 
 H.error_with_emphasis = function(s)
-	print(s)
+	Logger.error(s)
 end
 
 -- TODO: Remove after compatibility with Neovim=0.9 is dropped
@@ -61,14 +63,14 @@ local VimProcess = {} ---@diagnostic disable-line: missing-fields
 ---
 ---@field job table|nil Information about current job. If `nil`, child is not running.
 ---
----@field api vim.api Redirection table for `vim.api`. Doesn't check for blocked state.
+---@field api table Redirection table for `vim.api`. Doesn't check for blocked state.
 ---@field api_notify table Same as `api`, but uses |vim.rpcnotify()|.
 ---
 ---@field diagnostic table Redirection table for |vim.diagnostic|.
 ---@field fn table Redirection table for |vim.fn|.
 ---@field highlight table Redirection table for `vim.highlight` (|lua-highlight)|.
 ---@field json table Redirection table for `vim.json`.
----@field loop table Redirection table for |uv|.
+---@field uv table Redirection table for |uv|.
 ---@field lsp table Redirection table for `vim.lsp` (|lsp-core)|.
 ---@field mpack table Redirection table for |vim.mpack|.
 ---@field spell table Redirection table for |vim.spell|.
@@ -133,6 +135,17 @@ local VimProcessDefaultArgs = {
 M.VimProcessDefaultArgs = VimProcessDefaultArgs
 M.VimProcessDefaultOptions = VimProcessDefaultOptions
 
+--stylua: ignore start
+M.SupportedVimTables = {
+  -- Collections
+  'diagnostic', 'fn', 'highlight', 'json', 'uv', 'lsp', 'mpack', 'spell', 'treesitter', 'ui',
+  -- Variables
+  'g', 'b', 'w', 't', 'v', 'env',
+  -- Options (no 'opt' because not really useful due to use of metatables)
+  'o', 'go', 'bo', 'wo',
+}
+--stylua: ignore end
+
 ---comment
 ---@param opts table
 ---@return ulf.vim.spawn.VimProcess
@@ -144,11 +157,7 @@ function VimProcess.new(opts)
 		__index = function(_, key)
 			self:ensure_running()
 			return function(...)
-				P({
-					"VimProcess.api",
-					args = { ... },
-					key = key,
-				})
+				Logger.debug("VimProcess.api", key, ...)
 				return vim.rpcrequest(self.job.channel, key, ...)
 			end
 		end,
@@ -165,18 +174,8 @@ function VimProcess.new(opts)
 		end,
 	})
 
-  --stylua: ignore start
-  local supported_vim_tables = {
-    -- Collections
-    'diagnostic', 'fn', 'highlight', 'json', 'loop', 'lsp', 'mpack', 'spell', 'treesitter', 'ui',
-    -- Variables
-    'g', 'b', 'w', 't', 'v', 'env',
-    -- Options (no 'opt' because not really useful due to use of metatables)
-    'o', 'go', 'bo', 'wo',
-  }
-	--stylua: ignore end
-	for _, v in ipairs(supported_vim_tables) do
-		self[v] = self:redirect_to_child(v)
+	for _, v in ipairs(M.SupportedVimTables) do
+		self[v] = self:redirect_to_child(v) ---@diagnostic disable-line: no-unknown
 	end
 
 	return self
@@ -239,6 +238,7 @@ function VimProcess:start(args, opts)
 	until connected or i >= max_tries
 
 	if not connected then
+		---@type string
 		local err = "  " .. job.channel:gsub("\n", "\n  ")
 		H.error("Failed to make connection to self Neovim with the following error:\n" .. err)
 		self.stop()
@@ -292,11 +292,7 @@ function VimProcess:redirect_to_child(tbl_name)
 			local short_name = ("%s.%s"):format(tbl_name, key)
 			local obj_name = ("vim[%s][%s]"):format(vim.inspect(tbl_name), vim.inspect(key))
 
-			P({
-				"VimProcess.redirect_to_child",
-				short_name = short_name,
-				obj_name = obj_name,
-			})
+			Logger.debug("redirect_to_child", short_name, obj_name)
 			self:prevent_hanging(short_name)
 
 			---@type function
@@ -314,6 +310,7 @@ function VimProcess:redirect_to_child(tbl_name)
 			self:prevent_hanging(short_name)
 			return self.api.nvim_exec_lua(("return %s"):format(obj_name), {})
 		end,
+
 		__newindex = function(_, key, value)
 			self:ensure_running()
 

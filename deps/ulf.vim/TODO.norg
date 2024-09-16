@@ -2,8 +2,13 @@
 
   Below is a list of all todos
 
-** config
+** spawn
 
-   - ( ) config tasks
+   - ( ) All spawn tasks
+   -- (=) Provide annotations for VimProcess tables.
+         It is currently not possible. For instance `vim.api` does
+         not have a `@class` which could be used. 
+
+
 
 

@@ -118,4 +118,9 @@ function M.dump(value)
 	return table.concat(result, "")
 end
 
+function M._G(env)
+	env = env or _G
+	env.P = M.debug_print
+	env.pp = M.dump
+end
 return M
