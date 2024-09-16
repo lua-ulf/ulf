@@ -1,3 +1,11 @@
+# Test Makefile for ULF
+#
+# TODO:
+# - targets luarocks-make-local and luarocks-test-prepare should only be
+#   run once
+# - add a clean target to remove all rocks and start cleanly
+#
+
 SHELL := /bin/bash
 ROCKS_PACKAGE_VERSION := $(shell ./.rocks-version ver)
 ROCKS_PACKAGE_REVISION := $(shell ./.rocks-version rev)
@@ -5,83 +13,91 @@ APPNAME := ulf
 BUSTED_VERSION := 2.2.0-1
 DEPS_DIR := deps
 ROCKSPECS := $(wildcard $(DEPS_DIR)/*/*scm-1.rockspec)
-# ULF_DEPS := $(wildcard $(DEPS_DIR)/*)
-ULF_DEPS := ulf.async ulf.core ulf.doc ulf.lib ulf.log ulf.sys ulf.test ulf.util
+TMP_DIR := .tmp
+
+LUAROCKS_INIT ?= $(TMP_DIR)/luarocks-init
+LUAROCKS_DEPS ?= $(TMP_DIR)/luarocks-deps
+LUAROCKS_TEST_PREPARE ?= $(TMP_DIR)/luarocks-test-prepare
+LUAROCKS_MAKE_LOCAL ?= $(TMP_DIR)/luarocks-make-local
+TEST_DEPS ?= $(TMP_DIR)/test-deps
+
+# Target packages
+#
+# TODO:
+# - Each package should have its own test setup, including
+#   Makefile and test scripts
+# - Iterate over packages and call local test
+# - ULF_DEPS_TODO is just a reminder variable
+#
+ULF_DEPS_TODO := ulf.async ulf.core ulf.doc ulf.lib ulf.log ulf.sys ulf.test ulf.util
+# Packages tested with LuaJIT and Neovim
+ULF_DEPS := ulf.lib
+# Packages tested with Neovim only
 ULF_DEPS_NEOVIM := ulf.vim
 
 
-.PHONY: build test local lint
+.PHONY: build test local lint luarocks-make-local luarocks-test-prepare luarocks-init test-deps clean
 .EXPORT_ALL_VARIABLES:
 
 help: ## Display this help screen
-	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+all: deps
 
-luarocks-test-prepare: $(ROCKSPECS) ## installs all dependencies for testing
-	@for rockspec in $^; do \
-		echo "Testing $$rockspec"; \
-		luarocks test --prepare $$rockspec; \
-	done
-	
-luarocks-make-local: $(ROCKSPECS) ## installs all dependencies for the package
-	@for rockspec in $^; do \
-		echo "Testing $$rockspec"; \
-		luarocks make --no-install --local $$rockspec; \
-	done
+deps: | $(TEST_DEPS)
 
-	
-luarocks-init: ## initializes local project
+$(LUAROCKS_INIT): | $(TMP_DIR) ## Initializes local project
 	luarocks init
 	luarocks install --lua-version 5.1 busted $(BUSTED_VERSION)
 	luarocks install --lua-version 5.1 busted-htest
 	luarocks config --scope project lua_version 5.1
+	@touch $(TMP_DIR)/luarocks-init
 
+# Ensure luarocks-test-prepare is only run once
+$(LUAROCKS_TEST_PREPARE): $(ROCKSPECS) | $(LUAROCKS_INIT) ## Installs all dependencies for testing (runs once)
+	@for rockspec in $^; do \
+		echo "Preparing test for $$rockspec"; \
+		luarocks test --prepare $$rockspec; \
+	done
+	@touch $(TMP_DIR)/luarocks-test-prepare
 
-test-nvim: ## executes all test using Neovim as Lua interpreter
+$(LUAROCKS_MAKE_LOCAL): $(ROCKSPECS) | $(LUAROCKS_INIT)  ## Installs all dependencies for the package (runs once)
+	@for rockspec in $^; do \
+		echo "Installing locally for $$rockspec"; \
+		luarocks make --no-install --local $$rockspec; \
+	done
+	@touch $(TMP_DIR)/luarocks-make-local
+
+$(LUAROCKS_DEPS): | $(LUAROCKS_TEST_PREPARE) $(LUAROCKS_MAKE_LOCAL)
+	@touch $(TMP_DIR)/luarocks-deps
+
+$(TEST_DEPS): | $(LUAROCKS_DEPS)
+	@touch $(TMP_DIR)/test-deps
+
+test-nvim: | $(TEST_DEPS) ## Executes all tests using Neovim as Lua interpreter
 	@for dir in $(ULF_DEPS_NEOVIM); do \
-		echo "Testing $$dir"; \
+		echo "Testing Neovim-specific package: $$dir"; \
 		ULF_TEST_INTERPRETER=nvim ./scripts/run-tests.sh $(DEPS_DIR)/$$dir/spec/tests; \
 	done
 
 
-test-lua: ## executes all test using Neovim as Lua interpreter
-	echo $(ULF_DEPS) 
+test-lua: | $(TEST_DEPS) ## Executes all tests using LuaJIT and Neovim as Lua interpreter
 	@for dir in $(ULF_DEPS); do \
-		echo "Testing $$dir"; \
+		echo "Testing LuaJIT/Neovim package: $$dir"; \
 		ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh --directory=$(DEPS_DIR)/$$dir; \
 		ULF_TEST_INTERPRETER=nvim ./scripts/run-tests.sh $(DEPS_DIR)/$$dir/spec/tests; \
 	done
 
-test: test-nvim ## test ULF
+test: test-nvim test-lua ## Test all ULF packages
 	@echo "Testing all packages"
 
-# nlua:
-# 	@echo "installing nlua"
-# 	# LUAROCKS_CONFIG=./.luarocks/config-nlua.lua luarocks install --local nlua 
-#
-# show-config-nlua: ## shows the luarocks nlua configuration
-# 	@echo "luarocks nlua configuration"
-# 	# LUAROCKS_CONFIG=./.luarocks/config-nlua.lua luarocks 
-#
-# test-deps: ## install test dependencies
-# 	@echo "installing test dependencies"
-# 	# LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks test --prepare $(APPNAME)-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec
-#
-# build: ## build ULF
-# 	@echo "installing rockspec dependencies"
-# 	# LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks make --no-install --local $(APPNAME)-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec
+clean: ## Clean up all rocks and reset the environment
+	@echo "Cleaning up rocks and local installations..."
+	rm -f $(TMP_DIR)/*
+	rmdir $(TMP_DIR)
+	# luarocks remove --force $(APPNAME) || true
+	# rm -rf $(DEPS_DIR)/*/luarocks || true
 
-# local: build ## make local
-# 	# luarocks --lua-version=5.1 make --local lua-openai-dev-1.rockspec
+$(TMP_DIR):
+	@mkdir -p $(TMP_DIR)
 
-# lint: ## perform code linting
-# 	@echo "todo"
-# # test-nvim: test-deps-nvim ## run tests using nlua
-# 		# ULF_TEST_INTERPRETER=nvim ./scripts/run-tests.sh deps/ulf.vim/spec/tests/ulf/vim/spawn_spec.lua 
-# # 	@echo "installing tests using nlua"
-# # 	# LUAROCKS_CONFIG=./.luarocks/config-nlua.lua luarocks test -- --directory=deps/ulf.lib --tags=ulf.lib
-# # 	# LUAROCKS_CONFIG=./.luarocks/config-nlua.lua luarocks --lua-dir=$(HOME)/.luarocks-ulf/bin  test -- --directory=deps/ulf.vim --tags=ulf.vim
-# # 	# LUAROCKS_CONFIG=./.luarocks/config-nlua.lua ./scripts/luarocks-nlua  test -- --directory=deps/ulf.vim --tags=ulf.vim
-# # 	# ./scripts/luarocks-nlua  test -- --directory=deps/ulf.vim --tags=ulf.vim
-# #
-#
