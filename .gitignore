@@ -51,5 +51,7 @@ luac.out
 
 /luarocks
 /lua
+!/deps/**/lua
+
 /lua_modules
 /.luarocks
