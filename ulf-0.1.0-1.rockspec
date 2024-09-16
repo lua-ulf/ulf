@@ -22,10 +22,10 @@ dependencies = {
 	"lua >= 5.1",
 	"luv",
 	"inspect",
-	"luafilesystem",
+	-- "luafilesystem",
 	-- "cjson", -- have problems to install under luajit
-	"dkjson",
-	"tabular",
+	-- "dkjson",
+	-- "tabular",
 }
 build = {
 	type = "builtin",

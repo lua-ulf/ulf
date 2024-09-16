@@ -1,15 +1,15 @@
 ---@diagnostic disable:lowercase-global
 
 rockspec_format = "3.0"
-package = "ulf.async"
+package = "ulf.util"
 version = "scm-1"
 source = {
 	url = "https://github.com/lua-ulf/ulf.async/archive/refs/tags/scm-1.zip",
 }
 
 description = {
-	summary = "ulf.async is a documentation module for the ULF framework.",
-	detailed = "ulf.async is a documentation module for the ULF framework.",
+	summary = "ulf.util is a util module for the ULF framework.",
+	detailed = "ulf.util is a util module for the ULF framework.",
 	labels = { "docgen", "neovim", "ulf" },
 	homepage = "http://github.com/lua-ulf/ulf.async",
 	license = "MIT",
@@ -18,7 +18,6 @@ description = {
 dependencies = {
 	"lua >= 5.1",
 	"inspect",
-	"lua_cliargs",
 }
 build = {
 	type = "builtin",
@@ -29,7 +28,6 @@ build = {
 test_dependencies = {
 	"busted",
 	"busted-htest",
-	"nlua",
 	"luacov",
 	"luacov-html",
 	"luacov-multiple",

@@ -13,6 +13,7 @@ return {
 			-- "ulf",
 			-- "ulf.core",
 			"ulf.lib",
+			"ulf.vim",
 		},
 		output = "htest",
 		verbose = true,
@@ -42,6 +43,12 @@ return {
 	["ulf.lib"] = {
 		tags = "ulf.lib",
 		ROOT = { "deps/ulf.lib/spec/tests" },
+		verbose = true,
+	},
+	["ulf.vim"] = {
+		lua = "nlua",
+		tags = "ulf.vim",
+		ROOT = { "deps/ulf.vim/spec/tests" },
 		verbose = true,
 	},
 }

@@ -17,8 +17,6 @@ description = {
 
 dependencies = {
 	"lua >= 5.1",
-	"inspect",
-	"lua_cliargs",
 }
 build = {
 	type = "builtin",
@@ -29,7 +27,6 @@ build = {
 test_dependencies = {
 	"busted",
 	"busted-htest",
-	"nlua",
 	"luacov",
 	"luacov-html",
 	"luacov-multiple",

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUAROCKS_CONFIG=.luarocks/config-nlua.lua luarocks --local "$@"

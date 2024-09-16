@@ -1,4 +1,4 @@
----@class ulf.doc.util.debug.exports
+---@class ulf.util.debug.exports
 local M = {}
 
 ---comment

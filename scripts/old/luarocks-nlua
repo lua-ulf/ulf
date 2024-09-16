@@ -1,0 +1,10 @@
+#!/bin/sh
+lua_path="./?.lua;./?/init.lua;/Users/al/.luarocks-ulf/share/lua/5.1/?.lua;/Users/al/.luarocks-ulf/share/lua/5.1/?/init.lua"
+lua="$HOME/.luarocks-ulf/bin/nlua"
+lua_conf=".luarocks"
+luarocks="/opt/homebrew/bin/luarocks"
+lua_cpath="./?.so;/Users/al/.luarocks-ulf/lib/lua/5.1/?.so;/Users/al/.luarocks-ulf/lib/lua/5.4/?.so"
+
+# LUAROCKS_SYSCONFDIR='/opt/homebrew/etc/luarocks' exec "$HOME/.luarocks-ulf/bin/nlua" -e 'package.path=$HOME/.luarocks-ulf/share/lua/5.1/?.lua;$HOME/.luarocks-ulf/share/lua/5.1/?/init.lua;/opt/homebrew/share/lua/5.1/?/init.lua;/opt/homebrew/lib/lua/5.1/?.lua;/opt/homebrew/lib/lua/5.1/?/init.lua;./?.lua;./?/init.lua;package.cpath=$HOME/.luarocks-ulf/lib/lua/5.1/?.so;$HOME/.luarocks-ulf/lib/lua/5.1/loadall.so;./?.so;/Users/al/.luarocks/lib/lua/5.1/?.so' '/opt/homebrew/bin/luarocks' "$@"
+
+LUAROCKS_SYSCONFDIR=$lua_conf exec $lua -e "package.path=$lua_path;package.cpath=$lua_cpath" $luarocks --project-tree lua_modules "$@"
