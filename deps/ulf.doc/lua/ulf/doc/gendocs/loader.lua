@@ -2,54 +2,54 @@
 local M = {}
 local Debug = require("ulf.doc.util.debug")
 
----@param dev boolean
-function M.init(dev)
-	if not dev then
-		dev = false
-	end
-
-	local ulf_debug = os.getenv("ULF_DOC_DEBUG") or false
-	local root = os.getenv("PWD")
-
-	if not root:match("ulf%.doc$") then
-		root = root .. "/deps/ulf.doc"
-	end
-	local path = function(s)
-		return root .. s
-	end
-	local package_paths = {
-
-		lpath = {
-			path("/lua"),
-			path("/lua/ulf/doc"),
-			path("/build/2.1.0-beta3/share/lua/5.1"),
-		},
-		cpath = {
-			path("./?.so"),
-			path("build/2.1.0-beta3/lib/lua/5.1/?.so"),
-			path("build/2.1.0-beta3/lib/lua/5.1/loadall.so"),
-			os.getenv("HOME") .. "/.luarocks/lib/lua/5.1/?.so",
-		},
-	}
-
-	for _, dir in
-		ipairs(package_paths.lpath --[[@as string[]  ]])
-	do
-		package.path = package.path .. ";" .. dir .. "/?.lua"
-		package.path = package.path .. ";" .. dir .. "/?/init.lua"
-	end
-
-	for _, dir in
-		ipairs(package_paths.cpath --[[@as string[]   ]])
-	do
-		package.cpath = package.cpath .. ";" .. dir
-	end
-
-	if ulf_debug then
-		Debug.dump_lua_path("all")
-	end
-end
-
+-- ---@param dev boolean
+-- function M.init(dev)
+-- 	if not dev then
+-- 		dev = false
+-- 	end
+--
+-- 	local ulf_debug = os.getenv("ULF_DOC_DEBUG") or false
+-- 	local root = os.getenv("PWD")
+--
+-- 	if not root:match("ulf%.doc$") then
+-- 		root = root .. "/deps/ulf.doc"
+-- 	end
+-- 	local path = function(s)
+-- 		return root .. s
+-- 	end
+-- 	local package_paths = {
+--
+-- 		lpath = {
+-- 			path("/lua"),
+-- 			path("/lua/ulf/doc"),
+-- 			path("/build/2.1.0-beta3/share/lua/5.1"),
+-- 		},
+-- 		cpath = {
+-- 			path("./?.so"),
+-- 			path("build/2.1.0-beta3/lib/lua/5.1/?.so"),
+-- 			path("build/2.1.0-beta3/lib/lua/5.1/loadall.so"),
+-- 			os.getenv("HOME") .. "/.luarocks/lib/lua/5.1/?.so",
+-- 		},
+-- 	}
+--
+-- 	for _, dir in
+-- 		ipairs(package_paths.lpath --[[@as string[]  ]])
+-- 	do
+-- 		package.path = package.path .. ";" .. dir .. "/?.lua"
+-- 		package.path = package.path .. ";" .. dir .. "/?/init.lua"
+-- 	end
+--
+-- 	for _, dir in
+-- 		ipairs(package_paths.cpath --[[@as string[]   ]])
+-- 	do
+-- 		package.cpath = package.cpath .. ";" .. dir
+-- 	end
+--
+-- 	if ulf_debug then
+-- 		Debug.dump_lua_path("all")
+-- 	end
+-- end
+--
 ---@type ulf.doc.ConfigOptions
 function M.load(config)
 	local core = require("ulf.doc.util.core")
@@ -88,5 +88,4 @@ function M.load(config)
 	end
 end
 
-_G.P = require("ulf.doc.util.debug").debug_print
 return M

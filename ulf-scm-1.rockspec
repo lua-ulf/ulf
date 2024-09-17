@@ -8,12 +8,7 @@ source = {
 }
 
 description = {
-	summary = "ULF is a modular framework for Lua designed to provide developers with an intuitive API for development in Neovim and Luajit.",
-	detailed = [[
-  AI says: ULF is a modular, asynchronous framework for Lua designed to provide developers with a flexible, powerful, and 
-  intuitive API for development in Neovim and Luajit. The framework uses luv as its backend and implements the 
-  Async/Await pattern by default.
-  ]],
+	summary = "ULF is a library for Lua, LuaJIT, and Neovim, providing modules common development tasks.",
 	homepage = "http://github.com/lua-ulf/ulf",
 	license = "MIT",
 }

@@ -1,3 +1,13 @@
+---@brief [[
+--- This class can be used directly whenever an event emitter is needed.
+---
+---@see luvit core
+---@brief ]]
+
+---@tag ulf.core.util
+---@config { ["name"] = "ULF.CORE.UTIL" }
+---
+
 ---@class ulf.core.util
 local util = {}
 

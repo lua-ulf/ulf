@@ -55,12 +55,16 @@ function M.dir_exists(path)
 	end
 end
 
+--- tests if file exists
+--- @param path string path to test
+--- @return boolean?
 function M.file_exists(file)
 	return uv.fs_stat(file) ~= nil
 end
 
+--- returns the path to a standard path conforming to the XDG standard
 --- @param kind "config"|"data"|"cache"|"state"
---- @param ... string
+--- @param ... string path elements which are joined to the base path
 --- @return string?
 function M.stdpath(kind, ...)
 	---@type string?

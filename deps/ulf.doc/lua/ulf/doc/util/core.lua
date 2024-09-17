@@ -4,6 +4,8 @@ local Util = require("ulf.doc.util")
 local fs = require("ulf.doc.util.fs")
 local uv = vim and vim.uv or require("luv")
 
+require("ulf.util.debug")._G()
+
 ---@param s string
 ---@param len integer
 function M.trim(s, len)
@@ -167,7 +169,7 @@ end
 ---@param args string[]
 ---@param opts? {error_parser:ulf.doc.util.run_command_error_parse}
 function M.run_command(cmd, args, opts)
-	print(string.format("[ulf.doc.util.core] run_command: args=%s", table.concat(args, " ")))
+	print(string.format("[ulf.doc.util.core] run_command: cmd=%s args=%s", cmd, table.concat(args, " ")))
 	opts = opts or {}
 	---@type uv_process_t
 	local proc
@@ -205,12 +207,14 @@ function M.run_command(cmd, args, opts)
 		if guard then
 			guard:stop()
 		end
-		P("spawn callback", code, signal)
 		if code ~= 0 then
-			M.throw("run_command: errored" .. tostring(cmd), {
-				code = code,
-				signal = signal,
-			})
+			P("spawn callback", code, signal)
+			-- M.throw("run_command: errored" .. tostring(cmd), {
+			-- 	code = code,
+			-- 	signal = signal,
+			-- })
+			print(lines_stderr)
+			print(lines_stdout)
 		else
 			print(lines_stderr)
 			print(lines_stdout)

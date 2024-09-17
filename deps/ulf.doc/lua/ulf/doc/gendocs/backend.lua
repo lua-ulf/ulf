@@ -58,48 +58,67 @@ function runner.vim.callback(files, output_file, debug)
 	vim.cmd([[checktime]])
 end
 
----@param args ulf.doc.cliargs
-function runner.vim.entrypoint(args)
-	local output_file = fs.joinpath(args.path_output, args.app .. ".txt")
-	Config.setup()
-	-- FIXME: I'm trying to load the plugins without an init file
-	-- fails with:
-	-- E5108: Error executing lua ...l/.local/share/nvim/runtime/lua/vim/treesitter/query.lua:252: Query error at 1:2. Invalid node type "module_return_st
-	-- atement":
-	-- (module_return_statement (identifier) @exported)
-	--
-	-- I know there is some func to load a treesitter module manually. Maby this helps.
-	-- currently no time to fix this
-	--
-	--
-	-- add runtime paths: se problem above
+---comment
+---@param s string
+---@param k? string
+---@return string
+local q = function(s, k)
+	k = k or "'"
+	return k .. s .. k
+end
+
+local VimArgs = {}
+VimArgs.rtp = function()
 	local rtp_path_cmd = ""
 	for _, value in ipairs(Config.runtime_paths()) do
 		rtp_path_cmd = rtp_path_cmd .. 'vim.opt.rtp:append("' .. value .. '");'
 	end
-	local cmd_args = {
-		-- "nvim",
-		"--headless",
-		"-u",
-		fs.joinpath("scripts/minimal_init.lua"),
-		[[-c 'lua ]]
-			.. rtp_path_cmd
-			.. [[require("ulf.doc.gendocs.backend").runner.vim.callback("]]
-			.. args.files
-			.. [[","]]
-			.. output_file
-			.. [[","]]
-			.. tostring(args.d)
-			.. [[")']],
-		"-cq",
-	}
+	return rtp_path_cmd
+end
 
-	local result = Util.core.run_command("nvim", cmd_args)
-	print(result)
+---@param files string
+---@param output_file string
+---@param debug_flag? boolean
+VimArgs.runner_callback = function(files, output_file, debug_flag)
+	local d_flag = (type(debug_flag) == "boolean" and (debug_flag and "true" or "false")) or "false"
+
+	local start = "autocmd VimEnter,BufEnter * ++nested lua vim.print('ENTER'); require("
+		.. q("ulf.doc.gendocs.backend")
+		.. ").runner.vim.callback("
+	local ending = [[)]]
+
+	local args_list = {}
+	args_list[#args_list + 1] = q(files)
+	args_list[#args_list + 1] = q(output_file)
+	args_list[#args_list + 1] = q(d_flag)
+
+	return start .. table.concat(args_list, ",") .. ending
+end
+
+local function call_script()
+	local path = package.searchpath("ulf.doc.gendocs.call_wrap", package.path)
+	if not path then
+		error("Cannot find script 'ulf.doc.gendocs.call_wrap'")
+	end
+	return path
+end
+VimArgs.runner_callback_debug = function(files, output_file, debug_flag)
+	-- local start = "autocmd VimEnter,BufEnter * ++nested lua vim.print('ENTER')"
+	-- return start
+	local d_flag = (type(debug_flag) == "boolean" and (debug_flag and "true" or "false")) or "false"
+
+	args_list = {}
+	args_list[#args_list + 1] = call_script()
+	args_list[#args_list + 1] = q(files)
+	args_list[#args_list + 1] = q(output_file)
+	args_list[#args_list + 1] = q(d_flag)
+
+	return table.concat(args_list, ",")
 end
 
 ---@param args ulf.doc.cliargs
 function runner.vim.spawn(args)
+	-- P(args)
 	local output_file = fs.joinpath(args.path_output, args.app .. ".txt")
 	Config.setup()
 	-- FIXME: I'm trying to load the plugins without an init file
@@ -113,19 +132,27 @@ function runner.vim.spawn(args)
 	--
 	--
 	-- add runtime paths: se problem above
-	local rtp_path_cmd = ""
-	for _, value in ipairs(Config.runtime_paths()) do
-		rtp_path_cmd = rtp_path_cmd .. 'vim.opt.rtp:append("' .. value .. '");'
-	end
 	local cmd_args = {
 		-- "nvim",
 		"--headless",
 		"-u",
-		fs.joinpath("scripts/minimal_init.lua"),
+		args.init_script,
+		-- "-c",
+		-- q(VimArgs.runner_callback_debug(args.files, output_file, args.d), [["]]),
+		-- "-cq",
+		"-l",
+		call_script(),
+		args.files,
+		output_file,
+		"false",
 	}
 
+	-- local result = Util.core.run_command("/Users/al/dev/projects/ulf/deps/ulf.doc/lua/ulf/doc/gendocs/wrap.sh", cmd_args)
 	local result = Util.core.run_command("nvim", cmd_args)
 	print(result)
+
+	-- local runner_callback_args = VimArgs.runner_callback(args.files, output_file, args.d)
+	-- print(table.concat(cmd_args, " "))
 end
 
 M.runner = runner

@@ -1,24 +1,30 @@
---[[
-Copyright 2014 The Luvit Authors. All Rights Reserved.
---]]
+---@brief [[
+--- This is the most basic object in ULF. It provides simple prototypal
+--- inheritance and inheritable constructors. All other objects inherit from this.
+---
+--- see luvit core
+---@brief ]]
+---@tag ulf.core.object
+---@config { ["name"] = "ULF.CORE.OBJECT" }
+---
+---@alias ulf.object_initialize fun(...:any)
+---
+---@class ulf.Object @this is the root object
+---@field initialize? ulg.object_initialize: called if present
+local Object = {}
 
+---@class ulf.ObjectMeta @this is the root metatable
+---@field __tostring? fun(t:ulf.ChildObject):string: @string string representation of this table
+---@field __index? ulf.Object: @default __index
+---@field super ulf.ChildObject: @reference to the base class
+---@field meta? ulf.ObjectMeta: @reference to the meta table
+Object.meta = { __index = Object }
+
+--- Create a new instance of this object comment
 ---
 --- This is the most basic object in Luvit. It provides simple prototypal
 --- inheritance and inheritable constructors. All other objects inherit from this.
 ---
----@class ulf.Object
----@field initialize fun(...:any)
-local Object = {}
-
----@class ulf.ObjectMeta
----@field __tostring? fun(t:ulf.ChildObject):string
----@field __index? ulf.Object
----@field super ulf.ChildObject
----@field meta? ulf.ObjectMeta
-Object.meta = { __index = Object }
-
--- Create a new instance of this object
----comment
 ---@return ulf.Object
 function Object:create()
 	local meta = rawget(self, "meta")
@@ -30,18 +36,17 @@ end
 
 --- Creates a new instance and calls `obj:initialize(...)` if it exists.
 ---
----     local Rectangle = Object:extend()
----     function Rectangle:initialize(w, h)
----       self.w = w
----       self.h = h
----     end
----     function Rectangle:getArea()
----       return self.w * self.h
----     end
----     local rect = Rectangle:new(3, 4)
----     p(rect:getArea())
----comment
----@param ... any
+---  local Rectangle = Object:extend()
+---  function Rectangle:initialize(w, h)
+---    self.w = w
+---    self.h = h
+---  end
+---  function Rectangle:getArea()
+---    return self.w * self.h
+---  end
+---  local rect = Rectangle:new(3, 4)
+---  p(rect:getArea())
+---@param ... any: @any user args
 ---@return ulf.Object
 function Object:new(...)
 	local obj = self:create()
@@ -58,12 +63,12 @@ end
 
 --- Creates a new sub-class.
 ---
----     local Square = Rectangle:extend()
----     function Square:initialize(w)
----       self.w = w
----       self.h = h
----     end
----@return ulf.ChildObject
+--- local Square = Rectangle:extend()
+--- function Square:initialize(w)
+---   self.w = w
+---   self.h = h
+--- end
+---@return ulf.ChildObject: the returned child class
 function Object:extend()
 	local obj = self:create()
 	---@type ulf.ObjectMeta

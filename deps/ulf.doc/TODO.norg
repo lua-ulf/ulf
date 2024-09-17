@@ -4,7 +4,17 @@
 
 ** config
 
+   We need a new config
+   @code lua
+
+
+
+   @end
+
+
+
    - ( ) config tasks
-   -- ( ) implement user config. 
+   -- ( ) introduce a new config table
+          
 
 

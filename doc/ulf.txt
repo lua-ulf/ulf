@@ -1,0 +1,215 @@
+================================================================================
+INTRODUCTION                                                               *ulf*
+
+`ULF` is a lightweight, modular library for `Lua`, `LuaJIT`, and `Neovim`,
+offering useful modules for common development tasks. The goal of `ULF` is to
+provide versatile modules that can be used across various environments, whether
+in `Neovim` or standard `Lua`, without imposing any specific constraints or
+dependencies.
+
+
+ulf.packages                                                    *ulf.packages*
+
+
+    Fields: ~
+        {packages} ({[string]:function})
+
+
+ulf                                                                      *ulf*
+
+
+
+
+================================================================================
+TestArray                                                          *TestArray*
+    Numeric table
+
+    Fields: ~
+        {len} (int)  size
+
+
+TestMap                                                              *TestMap*
+    Map-like table
+
+
+TestJob:new()                                                  *TestJob:new()*
+    Some docs for that class
+
+
+
+    Fields: ~
+        {cmd}  (string)  external command
+        {args} (table)   arguments for command
+
+
+TestJob:start({timeout})                                     *TestJob:start()*
+    Start a job
+
+
+    Parameters: ~
+        {timeout} (number)  set timeout, default 1000
+
+
+
+================================================================================
+ULF.CORE                                                              *ulf.core*
+
+ulf.core is the core library for the ULF project. It contains a superset of
+luvit@core and some custom functions and objects.
+
+
+
+
+================================================================================
+ULF.CORE.OBJECT                                                *ulf.core.object*
+
+This is the most basic object in ULF. It provides simple prototypal inheritance
+and inheritable constructors. All other objects inherit from this.
+
+see luvit core
+
+ulf.ObjectMeta                                                *ulf.ObjectMeta*
+    this is the root metatable
+
+    Fields: ~
+        {__tostring} (fun(t:ulf.ChildObject):string)  @string string
+                                                      representation of this
+                                                      table
+        {__index}    (ulf.Object)                     @default __index
+        {super}      (ulf.ChildObject)                @reference to the base
+                                                      class
+        {meta}       (ulf.ObjectMeta)                 @reference to the meta
+                                                      table
+
+
+ulf.ChildObject                                              *ulf.ChildObject*
+    ulf.Object
+
+    Fields: ~
+        {super} (ulf.Object)
+        {meta}  (ulf.ObjectMeta)
+
+
+Object:create()                                              *Object:create()*
+    Create a new instance of this object comment
+
+    This is the most basic object in Luvit. It provides simple prototypal
+    inheritance and inheritable constructors. All other objects inherit from
+    this.
+
+
+
+    Return: ~
+        ulf.Object
+
+
+Object:new({...})                                               *Object:new()*
+    Creates a new instance and calls `obj:initialize(...)` if it exists.
+
+    local Rectangle = Object:extend() function Rectangle:initialize(w, h) 
+    self.w = w self.h = h end function Rectangle:getArea() return self.w *
+    self.h end local rect = Rectangle:new(3, 4) p(rect:getArea())
+
+
+    Parameters: ~
+        {...} (any)  @any user args
+
+    Return: ~
+        ulf.Object
+
+
+Object:extend()                                              *Object:extend()*
+
+
+    Return: ~
+        ulf.ChildObject: the returned child class
+
+
+
+================================================================================
+ULF.CORE.EMITTER                                              *ulf.core.emitter*
+
+This class can be used directly whenever an event emitter is needed.
+
+@see luvit core
+
+
+================================================================================
+ULF.CORE.UTIL                                                    *ulf.core.util*
+
+This class can be used directly whenever an event emitter is needed.
+
+@see luvit core
+
+util.assert_resume({thread}, {...})                     *util.assert_resume()*
+    comment
+
+
+    Parameters: ~
+        {thread} (thread)
+        {...}    (any)
+
+
+util.bind({fn}, {self}, {...})                                   *util.bind()*
+    comment
+
+
+    Parameters: ~
+        {fn}   (function)
+        {self} (any)
+        {...}  (any)
+
+    Return: ~
+        function
+
+
+util.noop({err})                                                 *util.noop()*
+    comment
+
+
+    Parameters: ~
+        {err} (any)
+
+
+util.adapt({c}, {fn}, {...})                                    *util.adapt()*
+    j
+
+
+    Parameters: ~
+        {c}   (any)
+        {fn}  (function)
+        {...} (any)
+
+    Return: ~
+        unknown
+        unknown
+
+
+util.instanceof({obj}, {class})                            *util.instanceof()*
+    Returns whether obj is instance of class or not.
+
+    local object = Object:new() local emitter = Emitter:new()
+
+    assert(instanceof(object, Object)) assert(not instanceof(object, Emitter))
+
+    assert(instanceof(emitter, Object)) assert(instanceof(emitter, Emitter))
+
+    assert(not instanceof(2, Object)) assert(not instanceof('a', Object)) 
+    assert(not instanceof({}, Object)) assert(not instanceof(function() end,
+    Object))
+
+    Caveats: This function returns true for classes. assert(instanceof(Object,
+    Object)) assert(instanceof(Emitter, Object))
+
+
+
+    Parameters: ~
+        {obj}   (ulf.ChildObject)
+        {class} (ulf.ChildObject)
+
+    Return: ~
+        boolean
+
+
+
+ vim:tw=78:ts=8:ft=help:norl:

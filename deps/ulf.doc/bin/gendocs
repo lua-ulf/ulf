@@ -7,5 +7,5 @@ if not root:match("ulf%.doc$") then
 end
 package.path = package.path .. ";" .. root .. "/lua/?.lua;" .. root .. "/lua/init/?.lua;"
 
-require("ulf.doc.gendocs.loader").init(true)
+-- require("ulf.doc.gendocs.loader").init(true)
 require("ulf.doc.gendocs").run()

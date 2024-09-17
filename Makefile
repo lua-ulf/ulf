@@ -31,7 +31,7 @@ TEST_DEPS ?= $(TMP_DIR)/test-deps
 #
 ULF_DEPS_TODO := ulf.async ulf.core ulf.doc ulf.lib ulf.log ulf.sys ulf.test ulf.util
 # Packages tested with LuaJIT and Neovim
-ULF_DEPS := ulf.lib ulf.core
+ULF_DEPS := ulf.lib ulf.core ulf.doc
 # Packages tested with Neovim only
 ULF_DEPS_NEOVIM := ulf.vim
 

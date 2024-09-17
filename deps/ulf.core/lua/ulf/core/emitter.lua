@@ -1,4 +1,16 @@
---------------------------------------------------------------------------------
+---@brief [[
+--- This class can be used directly whenever an event emitter is needed.
+---
+---@see luvit core
+---@brief ]]
+
+---@tag ulf.core.emitter
+---@config { ["name"] = "ULF.CORE.EMITTER" }
+---
+
+---@alias ulf.bound_event_handler {callback:ulf.event_handler}
+---@alias ulf.event_handler fun(name:string,...:any)
+---@alias ulf.event_handler_map {[string]:ulf.event_handler|ulf.bound_event_handler}
 
 --- This class can be used directly whenever an event emitter is needed.
 ---
@@ -21,11 +33,6 @@
 ---     end
 ---     emitter:on('end', utils.bind(some_func, emitter))
 ---     emitter:emit('end', 'a', 'b', 'c')
----
----@alias ulf.bound_event_handler {callback:ulf.event_handler}
----@alias ulf.event_handler fun(name:string,...:any)
----@alias ulf.event_handler_map {[string]:ulf.event_handler|ulf.bound_event_handler}
----
 ---@class ulf.Emitter:ulf.ChildObject
 ---@field handlers ulf.event_handler_map
 ---@field super ulf.Object

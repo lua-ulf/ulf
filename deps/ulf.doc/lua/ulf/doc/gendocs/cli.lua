@@ -13,6 +13,23 @@
 ---@class ulf.doc.gendocs.cli.exports
 local M = {}
 local Config = require("ulf.doc.gendocs.config")
+require("ulf.util.debug")._G()
+
+local uv = vim and vim.uv or require("luv")
+
+---@return boolean
+local function exists(file)
+	return uv.fs_stat(file) ~= nil
+end
+
+---@return boolean
+local function dir_exists(dir)
+	local stat = uv.fs_stat(dir)
+	if stat ~= nil and stat.type == "directory" then
+		return true
+	end
+	return false
+end
 
 -- this is called when the flag -v or --version is set
 local function print_version()
@@ -38,20 +55,30 @@ end
 ---@field files string
 ---@field app string
 ---@field d? boolean
+---@field init_script? string
 ---@field config? string
 ---@field backend? 'vim'|'lua'
 ---
 ---@param args ulf.doc.gendocs.cliargs
 local function main(args)
-	require("ulf.doc.gendocs.backend").runner[args.backend].entrypoint(args)
+	require("ulf.doc.gendocs.backend").runner[args.backend].spawn(args)
+end
+
+local function init_script()
+	local path = package.searchpath("ulf.doc.gendocs.vim_init", package.path)
+	if not path then
+		error("Cannot find script 'ulf.doc.gendocs.vim_init'")
+	end
+	return path
 end
 
 function M.run()
 	local cli = require("cliargs") ---@diagnostic disable-line: no-unknown
 	cli:set_name("gendocs")
 	cli:set_description("generate Lua documentation")
+	cli:option("--init_script=INIT_SCRIPT", "vim init script (defaults to 'ulf.doc.gendocs.vim_init')", init_script())
 	cli:option("--app=APP", "name of the app")
-	cli:option("--config=FILEPATH", "path to a config file", Config.filename())
+	cli:option("--config=FILEPATH", "path to a config file")
 	cli:option("--path_output=FILEPATH", "path to the generated documentation files", "doc")
 	cli:option("--backend=BACKEND", "backend to use for generating docs: vim (default) or lua", "vim")
 	cli:option("--files=FILES", "list of files to process")
@@ -67,7 +94,18 @@ function M.run()
 		print(string.format("%s: %s; re-run with help for usage", cli.name, err))
 		os.exit(1)
 	end
+	if args.config and not exists(args.config) then
+		args.config = nil
+	else
+		if exists(Config.filename()) then
+			args.config = Config.filename()
+		end
+	end
 
+	if not dir_exists(args.path_output) then
+		print(string.format("path to output files does not exist: %s", args.path_output))
+		os.exit(1)
+	end
 	-- finally, let's check if the user passed in a config file using --config:
 	if args.config then
 		---@type ulf.doc.ConfigOptions?
@@ -76,10 +114,6 @@ function M.run()
 		if custom_config then
 			args.files = custom_config.gendocs.files or args.files
 			args.app = custom_config.gendocs.app or args.app
-		end
-
-		if args.d then
-			P(args)
 		end
 	end
 	if args.files and args.app then

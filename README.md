@@ -1,9 +1,13 @@
 # ULF: Universal Lua Framework
 
-`ULF` is a modular, asynchronous framework for Lua designed to provide
-developers with a flexible, powerful, and intuitive API for
-development in `Neovim` and `LuaJIT`. The framework sits on top `luv`
-and provides the async/ await pattern by default.
+`ULF` is a lightweight, modular library for `Lua`, `LuaJIT`, and `Neovim`,
+offering useful modules for common development tasks. The goal of `ULF` is to
+provide versatile modules that can be used across various environments, whether
+in `Neovim` or standard `Lua`, without imposing any specific constraints or
+dependencies.
+
+`ULF` is a library for `Lua`, `LuaJIT`, and `Neovim`, providing modules common development tasks.
+
 
 ## Repository Management
 

@@ -4,7 +4,7 @@ return {
 		lpath = "lua/?.lua;lua/?/init.lua",
 		pattern = "spec%.lua$",
 		-- lua = "nlua",
-		-- ROOT = { "spec/" },
+		ROOT = { "spec/" },
 	},
 	default = {
 		tags = {
@@ -12,13 +12,11 @@ return {
 		},
 		output = "htest",
 		verbose = true,
-		-- ROOT = { "spec/tests" },
 	},
-	-- tests = {
-	-- 	tags = { "tests", "ulf" },
-	-- 	ROOT = { "spec/tests" },
-	-- 	verbose = true,
-	-- },
+	tests = {
+		tags = { "ulf", "tests" },
+		verbose = true,
+	},
 	-- integration = {
 	-- 	tags = "integration",
 	-- 	ROOT = { "spec/tests" },
@@ -38,6 +36,5 @@ return {
 	["ulf"] = {
 		tags = "ulf",
 		ROOT = { "spec/tests" },
-		verbose = true,
 	},
 }
