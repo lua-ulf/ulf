@@ -31,7 +31,7 @@ TEST_DEPS ?= $(TMP_DIR)/test-deps
 #
 ULF_DEPS_TODO := ulf.async ulf.core ulf.doc ulf.lib ulf.log ulf.sys ulf.test ulf.util
 # Packages tested with LuaJIT and Neovim
-ULF_DEPS := ulf.lib
+ULF_DEPS := ulf.lib ulf.core
 # Packages tested with Neovim only
 ULF_DEPS_NEOVIM := ulf.vim
 
@@ -79,6 +79,9 @@ test-nvim: | $(TEST_DEPS) ## Executes all tests using Neovim as Lua interpreter
 		echo "Testing Neovim-specific package: $$dir"; \
 		ULF_TEST_INTERPRETER=nvim ./scripts/run-tests.sh $(DEPS_DIR)/$$dir/spec/tests; \
 	done
+
+test-ulf: | $(TEST_DEPS) ## Executes all API tests
+	ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh spec/tests
 
 
 test-lua: | $(TEST_DEPS) ## Executes all tests using LuaJIT and Neovim as Lua interpreter

@@ -21,6 +21,7 @@ description = {
 dependencies = {
 	"lua >= 5.1",
 	"luv",
+	"luvit",
 	"inspect",
 	-- "luafilesystem",
 	-- "cjson", -- have problems to install under luajit

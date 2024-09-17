@@ -8,12 +8,7 @@ return {
 	},
 	default = {
 		tags = {
-			-- "tests",
-			-- "integration",
-			-- "ulf",
-			-- "ulf.core",
-			"ulf.lib",
-			"ulf.vim",
+			"ulf",
 		},
 		output = "htest",
 		verbose = true,
@@ -40,15 +35,9 @@ return {
 	-- 	ROOT = { "spec/tests" },
 	-- 	verbose = true,
 	-- },
-	["ulf.lib"] = {
-		tags = "ulf.lib",
-		ROOT = { "deps/ulf.lib/spec/tests" },
-		verbose = true,
-	},
-	["ulf.vim"] = {
-		lua = "nlua",
-		tags = "ulf.vim",
-		ROOT = { "deps/ulf.vim/spec/tests" },
+	["ulf"] = {
+		tags = "ulf",
+		ROOT = { "spec/tests" },
 		verbose = true,
 	},
 }

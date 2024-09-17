@@ -7,5 +7,6 @@ git subtree push --prefix=deps/ulf.lib ulf-lib-upstream main
 git subtree push --prefix=deps/ulf.log ulf-log-upstream main
 git subtree push --prefix=deps/ulf.sys ulf-sys-upstream main
 git subtree push --prefix=deps/ulf.test ulf-test-upstream main
+git subtree push --prefix=deps/ulf.process ulf-process-upstream main
 git subtree push --prefix=deps/ulf.util ulf-util-upstream main
 git subtree push --prefix=deps/ulf.vim ulf-vim-upstream main
