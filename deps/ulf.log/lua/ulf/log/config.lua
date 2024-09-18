@@ -109,6 +109,12 @@ function Config:new(name, user_config)
 			for writer_name, writer_config in pairs(obj.logger[logger_config.name].writer) do
 				if not writer_config then
 					obj.logger[logger_config.name].writer[writer_name] = nil
+				else
+					if type(writer_config.level) == "string" then
+						obj.logger[logger_config.name].writer[writer_name].level =
+							-- FIXME: Ok not a copy?
+							Severity.create_severity_level(Severity.levels[writer_config.level:upper()])
+					end
 				end
 			end
 		end

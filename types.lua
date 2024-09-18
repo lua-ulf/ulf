@@ -1,13 +1,13 @@
 ---@meta _
 ---
----@class table<K, V>: { [K]: V }
----@class true: boolean
----@class false: boolean
+--- class table<K, V>: { [K]: V }
+--- class true: boolean
+--- class false: boolean
 ---
----@class ulf.InitOptions
+--- class ulf.InitOptions
 
----@class ulf
----@field core ulf.core
----@field doc ulf.doc
----@field init fun(opts:ulf.InitOptions)
----@field process ulf.GlobalProcess
+--- class ulf
+--- field core ulf.core
+--- field doc ulf.doc
+--- field init fun(opts:ulf.InitOptions)
+--- field process ulf.GlobalProcess

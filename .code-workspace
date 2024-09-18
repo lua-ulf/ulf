@@ -1,7 +1,0 @@
-{
-  "folders": [
-    { "path": "deps/ulf.core/lua/ulf/core" },
-    { "path": "deps/ulf.core/lua/ulf/lib" },
-    { "path": "deps/ulf.core/lua/ulf/log" }
-  ]
-}

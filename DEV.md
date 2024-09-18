@@ -1,5 +1,25 @@
 # ULF Development
 
+## Packages
+
+Standard implementation
+
+- init.lua: Module initialization
+  - on require returns standard module which is a table:
+
+  ```lua
+  {
+    package = {} -- the module's package
+    logging = {} -- logging config
+  }
+  ```
+
+- package.lua: The package Lua contains meta data for the module.
+  - generate rockspec
+  - read by ulf/init.lua
+- config: module config
+  - defaults.lua: Default settings and config schema
+  
 I had lots of troubles configuring luarocks to use neovim as lua interpreter.
 
 This one put me on track and is not so complicated

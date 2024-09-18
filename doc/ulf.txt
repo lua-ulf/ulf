@@ -8,15 +8,15 @@ in `Neovim` or standard `Lua`, without imposing any specific constraints or
 dependencies.
 
 
+ulf.Config                                                        *ulf.Config*
+
+
+
 ulf.packages                                                    *ulf.packages*
 
 
     Fields: ~
         {packages} ({[string]:function})
-
-
-ulf                                                                      *ulf*
-
 
 
 
@@ -212,4 +212,3 @@ util.instanceof({obj}, {class})                            *util.instanceof()*
 
 
 
- vim:tw=78:ts=8:ft=help:norl:

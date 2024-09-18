@@ -9,6 +9,8 @@
 ---@config { ["name"] = "ULF.CORE" }
 ---
 ---@class ulf.core
+---@field argsutil ulf.core.argsutil
+---@field json ulf.core.json
 ---@field minilib ulf.core.minilib
 local M = {
 
@@ -17,6 +19,8 @@ local M = {
 		version = "0.1.0",
 	},
 	modules = {
+		json = true,
+		argsutil = true,
 		minilib = true,
 	},
 }

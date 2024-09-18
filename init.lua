@@ -13,35 +13,55 @@
 
 local uv = vim and vim.uv or require("luv")
 local unpack = unpack or table.unpack
-local ffi = require("ffi")
 require("ulf.util.debug")._G()
+local ffi = require("ffi")
+local minilib = require("ulf.core").minilib
+local dir_exists = minilib.dir_exists
+local file_exists = minilib.file_exists
+local joinpath = minilib.joinpath
+P(minilib)
 
 local path_sep = ffi.os == "Windows" and "\\" or "/"
 
----@param ... string
----@return string?
-local function joinpath(...)
-	return (table.concat({ ... }, path_sep):gsub(path_sep .. path_sep .. "+", path_sep))
+---@class ulf.Config
+local defaults = {
+
+	logging = {
+
+		logger = {
+			{
+				name = "ulf",
+				icon = "👽",
+				writer = {
+					stdout = { level = "error" },
+					fs = { level = "debug" },
+				},
+				enabled = true,
+			},
+		},
+	},
+}
+
+local init_logger = function(ulf)
+	require("ulf.log").register("ulf", defaults.logging)
+	---@type ulf.ILogManager
+	ulf.logger.root = require("ulf.logger")
 end
 
----@return boolean
-local function exists(file)
-	return uv.fs_stat(file) ~= nil
+local register_logger = function(name, mod, config)
+	local mod_name = "ulf." .. name
+	require("ulf.log").register(mod_name, config)
+	ulf.logger.child[name] = require(mod_name .. ".logger")
 end
 
----@return boolean
-local function dir_exists(dir)
-	local stat = uv.fs_stat(dir)
-	if stat ~= nil and stat.type == "directory" then
-		return true
-	end
-	return false
+local function assert_module_interface(mod)
+	assert(type(mod) == "table", "validate_module_interface: expect mod to be a table")
+	assert(type(mod.package) == "table", "validate_module_interface: expect mod.package to be a table")
 end
-
 ---@return {[string]:function}
 local function packages_list()
 	local packs = {}
-	if exists(".gitignore") and dir_exists("deps") then
+	if file_exists(".gitignore") and dir_exists("deps") then
 		local pack_dir = uv.fs_scandir("deps")
 
 		while true do
@@ -52,9 +72,28 @@ local function packages_list()
 			local match = string.match(name, "^ulf%.(.*)$")
 			if match then
 				packs[match] = function()
-					local p = joinpath("deps", name, "lua", "ulf", match, "init.lua")
-					local v = loadfile(p)()
-					return v
+					local package_path = joinpath("deps", name, "package.lua")
+					if not minilib.file_exists(package_path) then
+						error("invalid package: " .. tostring(name) .. ", missing package.lua")
+					end
+					local init_path = joinpath("deps", name, "lua", "ulf", match, "init.lua")
+					local package = loadfile(package_path)()
+					local module = loadfile(init_path)()
+
+					return setmetatable({
+						module = module,
+						package = package,
+						setup = module.setup and module.setup,
+					}, {
+
+						__index = function(t, k)
+							local v = module[k]
+							if v then
+								rawset(t, k)
+								return v
+							end
+						end,
+					})
 				end
 			end
 		end
@@ -89,36 +128,74 @@ local packages = setmetatable({}, {
 	end,
 })
 
----comment
----@param key string
-local function get(key) end
-
 ---@type ulf
-local ulf = {} ---@diagnostic disable-line: missing-fields
+local ulf = {
+	initialized = false,
+	logger = {
+		child = {},
+		root = {},
+	},
+} ---@diagnostic disable-line: missing-fields
 _G.ulf = ulf
 
+-- ---comment
+-- ---@param k string
+-- local function get(t, k)
+-- 	ulf.logger.debug("ulf.__index: get(" .. tostring(k)(")"))
+-- 	local v = packages[k]
+--
+-- 	if v then
+-- 		if type(v) == "function" then
+-- 			v = v()
+-- 		end
+-- 		rawset(t, k, v)
+-- 		return v
+-- 	end
+-- end
+
 function ulf.init(opts)
+	if ulf.initialized then
+		return
+	end
 	ulf.process = require("ulf.core.process").global_process()
+	init_logger(ulf)
 	-- Seed Lua's RNG
 	do
 		math.randomseed(os.time())
 	end
+	ulf.logger.root.debug("ULF initialized")
+	ulf.initialized = true
 end
 
-return setmetatable({}, {
-	__index = function(t, k)
-		local v = packages[k]
+local function ensure_initilaized()
+	if not ulf.initialized then
+		ulf.init()
+	end
+end
 
-		P({
-			"ULF init.__index",
-			k = k,
-		})
-		if v then
-			if type(v) == "function" then
-				v = v()
+local function package_setup(pack, name)
+	-- call package setup if setup func is provided
+	if type(pack.setup) == "function" then
+		---TODO: user config
+		local conf = pack.setup()
+		P(conf.logging)
+		register_logger(name, pack, conf.logging)
+	end
+end
+ensure_initilaized()
+
+return setmetatable(ulf, {
+	__index = function(t, k)
+		local pack = packages[k]
+		ulf.logger.root.debug("ulf.__index: " .. tostring(k))
+
+		if pack then
+			if type(pack) == "function" then
+				pack = pack()
 			end
-			rawset(t, k, v)
-			return v
+			package_setup(pack, k)
+			rawset(t, k, pack)
+			return pack
 		end
 	end,
 })

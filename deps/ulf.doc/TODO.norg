@@ -2,6 +2,19 @@
 
   Below is a list of all todos
 
+** research
+
+   - ( ) research tasks
+   -- ( ) eval ltreesitter: basically treesitter with pure Lua
+          see: https://github.com/euclidianAce/ltreesitter/tree/main
+
+** lib
+
+   - ( ) lib tasks
+   -- ( ) update ulf/doc/lib/luacats from Neovim upstream
+          This should be automated using the upcoming `ulf.build` module.
+
+
 ** config
 
    We need a new config
@@ -15,6 +28,8 @@
 
    - ( ) config tasks
    -- ( ) introduce a new config table
+
+ 
           
 
 

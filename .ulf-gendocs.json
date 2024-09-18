@@ -1,6 +1,6 @@
 {
   "gendocs": {
-    "files": "init.lua,doc_test.lua,deps/ulf.core/lua/ulf/core/init.lua,deps/ulf.core/lua/ulf/core/object.lua,deps/ulf.core/lua/ulf/core/emitter.lua,deps/ulf.core/lua/ulf/core/util.lua",
+    "files": "init.lua,doc_test.lua,deps/ulf.core/lua/ulf/core/init.lua,deps/ulf.core/lua/ulf/core/object.lua,deps/ulf.core/lua/ulf/core/emitter.lua,deps/ulf.core/lua/ulf/core/util.lua,/Users/al/dev/projects/ulf/deps/ulf.core/lua/ulf/core/mods/minilib.lua",
     "app": "ulf"
   }
 }

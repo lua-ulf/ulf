@@ -2,7 +2,7 @@
 
   Below is a list of all todos
 
-** Bootstrap Library
+ ** Bootstrap Library (minilib)
 
    We need a small library which provides functions for loading the framework.
    See ulf.doc, ulf.log which all use some utils which can be bundled.
@@ -12,5 +12,7 @@
           Take a look at luvit, they have this stuff implemented.
    --- ( ) table manipulation: merging, copying
    --- ( ) string manipulation: split, trim and so on
+
+** ulf.doc
 
 
