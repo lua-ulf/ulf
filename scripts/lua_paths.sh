@@ -13,6 +13,8 @@ LUA_PATH=""
 #   LUA_PATH="$LUA_PATH;$BASE/deps/ulf.$dir/lua/?.lua;$BASE/deps/ulf.$dir/lua/?/init.lua"
 # done
 
+LUA_PATH="$LUA_PATH;/Users/al/dev/projects/?/init.lua;"
+LUA_PATH="$LUA_PATH;$BASE/lua/?.lua;$BASE/lua/?/init.lua;"
 LUA_PATH="$LUA_PATH;$BASE/deps/ulf.async/lua/?.lua;$BASE/deps/ulf.async/lua/?/init.lua"
 LUA_PATH="$LUA_PATH;$BASE/deps/ulf.core/lua/?.lua;$BASE/deps/ulf.core/lua/?/init.lua"
 LUA_PATH="$LUA_PATH;$BASE/deps/ulf.doc/lua/?.lua;$BASE/deps/ulf.doc/lua/?/init.lua"

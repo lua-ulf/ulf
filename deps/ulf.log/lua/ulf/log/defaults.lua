@@ -25,7 +25,7 @@ local tbl_deep_extend = _table.tbl_deep_extend
 --- field default string
 
 ---@class ulf.log.config.LoggerWriterSettings
----@field enabled boolean
+---@field enabled? boolean
 ---@field severity ulf.log.SeverityLevelType
 
 ---@class ulf.log.config.DefaultLoggerOptions
@@ -36,7 +36,7 @@ local tbl_deep_extend = _table.tbl_deep_extend
 ---@field icon string
 ---@field writer? {[string]:ulf.log.config.LoggerWriterSettings|boolean}
 ---@field name string
----@field enabled boolean
+---@field enabled? boolean
 
 ---@class ulf.log.config.GlobalConfigOptions
 ---@field severity ulf.log.SeverityLevelType

@@ -1,17 +1,17 @@
 ---@diagnostic disable:lowercase-global
 
 rockspec_format = "3.0"
-package = "ulf.doc"
+package = "ulf.core"
 version = "0.1.0-1"
 source = {
-	url = "https://github.com/lua-ulf/ulf.doc/archive/refs/tags/0.1.0-1.zip",
+	url = "https://github.com/lua-ulf/ulf.core/archive/refs/tags/0.1.0-1.zip",
 }
 
 description = {
-	summary = "ulf.doc is a documentation module for the ULF framework.",
-	detailed = "ulf.doc is a documentation module for the ULF framework.",
+	summary = "ulf.core is a documentation module for the ULF framework.",
+	detailed = "ulf.core is a documentation module for the ULF framework.",
 	labels = { "docgen", "neovim", "ulf" },
-	homepage = "http://github.com/lua-ulf/ulf.doc",
+	homepage = "http://github.com/lua-ulf/ulf.core",
 	license = "MIT",
 }
 

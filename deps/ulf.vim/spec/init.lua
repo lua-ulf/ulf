@@ -7,7 +7,3 @@ Busted.project_init()
 -- _G.TestSuite = TestSuite
 -- _G.inspect = require("spec.helpers.inspect")
 --
--- function _G.P(v)
--- 	print("============ test debug ===========")
--- 	print(_G.inspect(v))
--- end

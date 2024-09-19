@@ -12,8 +12,6 @@ local function test_1()
 		nvim_executable = "/Users/al/.local/bin/nvim",
 	})
 	-- proc:connect()
-	-- P(proc:is_running())
-	P(proc.api.nvim_get_all_options_info())
 
 	if proc:is_running() then
 		P(proc.uv.cwd())
@@ -25,8 +23,6 @@ local function test_2()
 	package.path = package.path .. ";" .. "/Users/al/.local/share/nvim/lazy/mini.test/lua/?/init.lua"
 	local Child = require("mini.test").new_child_neovim()
 	Child:start()
-	-- P(Child.api.nvim_get_all_options_info())
-	-- P(Child)
 end
 
 test_1()

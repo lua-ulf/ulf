@@ -22,7 +22,6 @@ luac.out
 *.elf
 
 /luarocks
-/lua
 !/deps/**/lua
 
 /lua_modules

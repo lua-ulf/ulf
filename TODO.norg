@@ -2,17 +2,48 @@
 
   Below is a list of all todos
 
- ** Bootstrap Library (minilib)
+*** Loader
 
-   We need a small library which provides functions for loading the framework.
-   See ulf.doc, ulf.log which all use some utils which can be bundled.
+    The loader is responsible for loading modules and detects if we load from
+    the repository or a Luarocks tree.
 
-   - ( ) Bootstrap tasks
-   -- ( ) provide functions for loading modules.
-          Take a look at luvit, they have this stuff implemented.
-   --- ( ) table manipulation: merging, copying
-   --- ( ) string manipulation: split, trim and so on
+    Goals: Create global ulf table and dynamicall load packages
 
-** ulf.doc
+    @code lua
+    local ulf = require("ulf")
+
+    assert(ulf == _G.ulf)
+    assert(ulf._.packages) -- packages registry
+
+    local core = ulf.core
+    assert(ulf._.packages.loaded['ulf.core']) -- ulf.core is dynamically loaded
+    @end
+
+*** Logger
+
+    The logger must be `lazy` since packages are loaded when the user 
+    triggers a load event by accessing the table.
+
+    - ( ) Logger tasks
+    -- ( ) Provide `lazyness`
+    --- ( ) Add methods for adding and removing loggers and config data
+    -- ( ) Logging should be started as early as possible. This leads to 
+           a small gap of time where the logger runs only with defaults. 
+    --- ( ) Review defaults
+    --- ( ) refactor setup so that it can called multiple times
+
+
+*** Bootstrap Library (minilib)
+
+    We need a small library which provides functions for loading the framework.
+    See ulf.doc, ulf.log which all use some utils which can be bundled.
+
+    - ( ) Bootstrap tasks
+    -- ( ) provide functions for loading modules.
+           Take a look at luvit, they have this stuff implemented.
+    --- ( ) table manipulation: merging, copying
+    --- ( ) string manipulation: split, trim and so on
+
+**** ulf.doc
 
 

@@ -1,4 +1,4 @@
----@type ulf.log
+---@class ulf.log
 return {
 
 	package = {

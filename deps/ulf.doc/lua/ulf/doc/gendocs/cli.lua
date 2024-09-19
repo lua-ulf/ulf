@@ -12,11 +12,51 @@
 ---
 ---@class ulf.doc.gendocs.cli.exports
 local M = {}
+local ModuleConfig = require("ulf.doc.config")
+local minilib = require("ulf.core").minilib
 local Config = require("ulf.doc.gendocs.config")
 require("ulf.util.debug")._G()
 
 local uv = vim and vim.uv or require("luv")
 
+local cliargs_config = {
+
+	tree_sitter_lua = {
+
+		options = {
+			{ key = "--app=APP", description = "Name of the app/plugin" },
+			{
+				key = "--loader_script=LOADER_SCRIPT",
+				description = "The loader script which executes generation processs.",
+			},
+			{ key = "--files=FILES", description = "List of files " },
+			{ key = "--config=CONFIG", description = "Path to config" },
+			{ key = "--output_path=OUTPUT_PATH", description = "Path to output" },
+			{ key = "--config=CONFIG", description = "Path to config" },
+		},
+	},
+}
+local create_cliarg = function()
+	local spec = {
+		name = "gendocs",
+		description = "TODO no desc",
+		commands = {},
+	}
+
+	for backend_name, backend in pairs(ModuleConfig.backends) do
+		local command = cliargs_config[backend_name]
+		if backend.enabled and command then
+			spec.commands[#spec.commands + 1] = minilib.tbl_deep_extend("force", {
+				name = backend.name,
+				description = backend.description,
+			}, command)
+		end
+	end
+	local cli = require("ulf.core").argsutil.create_parser(spec)
+
+	return cli
+end
+P(create_cliarg())
 ---@return boolean
 local function exists(file)
 	return uv.fs_stat(file) ~= nil

@@ -7,10 +7,10 @@
 ---@config { ["name"] = "ULF.CORE.ARGSUTIL" }
 ---
 
----
 ---@class ulf.core.argsutil
 local argsutil = {}
 
+require("ulf.util.debug")._G()
 ---@alias ulf.core.argsutil.value_type string|fun(v:string):string
 
 ---@class ulf.core.argsutil.BaseArg
@@ -59,27 +59,37 @@ function argsutil.create_parser(spec)
 
 	---@return ulf.core.argsutil.Parser
 	local function new_parser()
-		cli = require("cliargs") ---@diagnostic disable-line: no-unknown
+		local cli = require("cliargs") ---@diagnostic disable-line: no-unknown
 		cli:set_name(spec.name)
 		cli:set_description(spec.description)
-		for _, argument in ipairs(spec.arguments) do
-			cli.argument(cli, argument.key, argument.description, argument.callback)
+		if type(spec.arguments) == "table" then
+			for _, argument in ipairs(spec.arguments) do
+				cli.argument(cli, argument.key, argument.description, argument.callback)
+			end
 		end
 
-		for _, option in ipairs(spec.options) do
-			cli.option(cli, option.key, option.description, option.default, option.callback)
+		if type(spec.options) == "table" then
+			for _, option in ipairs(spec.options) do
+				cli.option(cli, option.key, option.description, option.default, option.callback)
+			end
 		end
 
-		for _, flag in ipairs(spec.flag) do
-			cli.option(cli, flag.key, flag.description, flag.default, flag.callback)
+		if type(spec.flags) == "table" then
+			for _, flag in ipairs(spec.flag) do
+				cli.option(cli, flag.key, flag.description, flag.default, flag.callback)
+			end
 		end
 
-		for _, splat in ipairs(spec.splats) do
-			cli.argument(cli, splat.key, splat.description, splat.default, splat.maxcount, splat.callback)
+		if type(spec.splats) == "table" then
+			for _, splat in ipairs(spec.splats) do
+				cli.argument(cli, splat.key, splat.description, splat.default, splat.maxcount, splat.callback)
+			end
 		end
 
-		for _, command in ipairs(spec.commands) do
-			cli.command(cli, command.key, command.description)
+		if type(spec.commands) == "table" then
+			for _, command in ipairs(spec.commands) do
+				cli.command(cli, command.key, command.description)
+			end
 		end
 	end
 

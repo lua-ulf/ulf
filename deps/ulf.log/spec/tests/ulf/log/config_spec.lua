@@ -118,7 +118,6 @@ describe("#ulf", function()
 				it("returns defaults if the user config is empty or nil", function()
 					local conf = Config("testapp1")
 
-					P(conf.writer)
 					validator.config(conf, WantedBase)
 					-- validator.logfile(conf, { expect_pattern = "%/ulf%/log%/testapp1%.log" })
 				end)

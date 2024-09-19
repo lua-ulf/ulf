@@ -3,7 +3,7 @@ local M = {}
 local uv = vim and vim.uv or require("luv")
 
 ---@type ulf
-local minilib = require("ulf.core.mods.minilib")
+local minilib = require("ulf.core").minilib
 local deps_root = "~/.cache/ulf/build/doc"
 
 ---comment
@@ -66,7 +66,7 @@ local defaults = {
 			description = [[Uses tree-sitter-lua to parse LuaCATS annotations and generates a vimdoc.]],
 		},
 		mini_doc = {
-			enabled = true,
+			enabled = false,
 			-- path to the plugin, if empty or nil the default path is used
 			-- $HOME/.cache/ulf/build/doc/mini.doc
 			plugin_path = "",
@@ -86,7 +86,7 @@ local defaults = {
 			description = [[Parses LuaCATS annotations from any Lua file and generates customized output files]],
 		},
 		md_helptags = {
-			enabled = true,
+			enabled = false,
 			-- path to the plugin, if empty or nil the default path is used
 			-- $HOME/.cache/ulf/build/doc/mini.doc
 			plugin_path = "",
@@ -100,20 +100,23 @@ local defaults = {
 
 M.defaults = defaults
 
-M.backends = function()
-	return minilib.tbl_keys(M.options.backends)
-end
-
 ---@type ulf.doc.config.ConfigOptions
-M.options = {}
+local options
 
 ---@param opts? ulf.doc.config.ConfigOptions
 function M.setup(opts)
-	local options = minilib.tbl_deep_extend("force", defaults, opts or {}) or {}
-
-	M.options = options
+	options = minilib.tbl_deep_extend("force", defaults, opts or {}) or {}
 
 	return options
 end
 
+setmetatable(M, {
+	__index = function(_, key)
+		if options == nil then
+			return minilib.deepcopy(defaults)[key]
+		end
+		---@cast options ulf.doc.config.ConfigOptions
+		return options[key]
+	end,
+})
 return M

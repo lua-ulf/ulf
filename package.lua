@@ -1,5 +1,5 @@
 return {
-	name = "lua-ulf/ulf",
+	descriptionname = "lua-ulf/ulf",
 	version = "0.1.0",
 	license = "Apache 2",
 	homepage = "https://github.com/luvit/luvit",

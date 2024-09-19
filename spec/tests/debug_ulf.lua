@@ -1,4 +1,4 @@
-require("ulf.util.debug")._G()
+require("ulf").util.debug._G()
 local ulf = require("ulf")
 P({
 	"debug ulf",

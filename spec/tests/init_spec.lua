@@ -15,24 +15,27 @@ local packages = {
 	vim = true,
 }
 describe("#ulf", function()
-	it("provides access to modules", function()
-		-- local main_called = false
-		-- local main = function()
-		-- 	main_called = true
-		-- end
+	it("provides access to the core module using ulf.core", function()
 		local ulf = require("ulf")
-		local got = {}
-		for _, key in ipairs(packages) do
-			local pack = ulf[key]
-			P(pack)
-			if pack then
-				got[key] = true
-			end
-			-- assert(package)
-			-- assert.Table(package)
-			-- assert.same({ 1 }, package)
-		end
-		assert.same(got, packages)
-		-- assert.True(main_called)
+		local ulf_core = require("ulfboot.core")
+		assert(ulf)
+
+		local core = ulf.core
+		assert(core)
+	end)
+
+	it("provides access to the doc module using ulf.doc", function()
+		local ulf = require("ulf")
+		assert(ulf)
+
+		local doc = ulf.doc
+		assert(doc)
+	end)
+	it("provides access to the log module using ulf.log", function()
+		local ulf = require("ulf")
+		assert(ulf)
+
+		local log = ulf.log
+		assert(log)
 	end)
 end)
