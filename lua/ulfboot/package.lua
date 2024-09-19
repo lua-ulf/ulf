@@ -79,7 +79,7 @@ function Package.new(modpath, opts)
 	if not path then
 		error("Package.new: unable to find package path for '" .. tostring(modpath) .. "'")
 	end
-	print(string.format("Package.path=%s", path))
+
 	self.path = path
 	self.modpath = modpath
 	self.meta = Meta.new(self)
@@ -102,7 +102,6 @@ end
 function Package.loadfile(modpath, opts)
 	local pack = Package.new(modpath)
 	local module = loadfile(pack.path)
-	P(module)
 
 	if not module then
 		return nil, "Error loading package '" .. tostring(modpath) .. "'"
@@ -117,4 +116,3 @@ end
 M.Cache = Cache
 M.loadfile = Package.loadfile
 M.new = Package.new
-return M

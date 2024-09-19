@@ -20,6 +20,7 @@ LUAROCKS_DEPS ?= $(TMP_DIR)/luarocks-deps
 LUAROCKS_TEST_PREPARE ?= $(TMP_DIR)/luarocks-test-prepare
 LUAROCKS_MAKE_LOCAL ?= $(TMP_DIR)/luarocks-make-local
 TEST_DEPS ?= $(TMP_DIR)/test-deps
+BUSTED_TAG ?= default
 
 # Target packages
 #
@@ -81,7 +82,7 @@ test-nvim: | $(TEST_DEPS) ## Executes all tests using Neovim as Lua interpreter
 	done
 
 test-ulf: | $(TEST_DEPS) ## Executes all API tests
-	ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh spec/tests
+	ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh --run=$(BUSTED_TAG) spec/tests
 
 
 test-lua: | $(TEST_DEPS) ## Executes all tests using LuaJIT and Neovim as Lua interpreter

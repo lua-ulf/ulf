@@ -56,7 +56,6 @@ local options
 ---@param opts? ulf.config.ConfigOptions
 ---@return ulf.config.ConfigOptions
 function M.setup(loader, opts)
-	print(string.format("config.setup: called"))
 	options = minilib.tbl_deep_extend("force", defaults, opts or {}) or {}
 
 	loader.init()

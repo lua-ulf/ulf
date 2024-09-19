@@ -1,0 +1,26 @@
+return {
+	_all = {
+		coverage = false,
+		lpath = "lua/?.lua;lua/?/init.lua",
+		pattern = "spec%.lua$",
+		-- lua = "nlua",
+		ROOT = { "spec/" },
+	},
+	default = {
+		tags = {
+			"tests",
+			"ulfboot",
+		},
+		output = "htest",
+		verbose = true,
+	},
+	tests = {
+		tags = { "tests" },
+		verbose = true,
+	},
+
+	ulfboot = {
+		tags = { "ulfboot" },
+		verbose = true,
+	},
+}

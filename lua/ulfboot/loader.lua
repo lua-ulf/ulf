@@ -6,17 +6,6 @@
 ---@config { ["name"] = "ULF.LOADER" }
 ---
 
----@class ulf.loader.ModuleFinderOpts
----@field all? boolean Search for all matches (defaults to `false`)
----@field rtp? boolean Search for modname in the runtime path (defaults to `true`)
----@field patterns? string[] Patterns to use (defaults to `{"/init.lua", ".lua"}`)
----@field paths? string[] Extra paths to search for modname
-
----@class ulf.loader.ModuleInfo
----@field modpath string Path of the module
----@field modname string Name of the module
----@field stat? uv_fs_t File stat of the module path
-
 ---@alias ulf.loader.LoaderCache table<string, {total:number, time:number, [string]:number?}?>
 
 local string = string
@@ -39,6 +28,7 @@ local Loader = {
 		io.flush()
 	end,
 }
+
 local function split(inputstr, sep)
 	if sep == nil then
 		sep = "%."
@@ -49,6 +39,7 @@ local function split(inputstr, sep)
 	end
 	return t
 end
+
 ---@class ulf.InitOptions
 ---@field dev boolean set development mode (default off)
 
@@ -86,6 +77,7 @@ _libdata.available = setmetatable({}, {
 		end
 	end,
 })
+
 --- Tracks the time spent in a function
 ---@private
 function Loader.track(stat, start)
@@ -104,12 +96,14 @@ Loader.default_loader = nil
 ---@see |luaL_loadfile()|
 ---@return function?, string? error_message
 ---@private
-function Loader.ulf_load(modpath, opts)
+function Loader.load(modpath, opts)
+	local start = uv.hrtime()
+	Loader.track("load", start)
+
 	opts = opts or {}
 	local elem = split(modpath)
 
 	if not (elem and elem[1] == "ulf") then
-		Loader.debug(string.format("Loader.ulf_load: redirect request for '%s' to default loader", modpath))
 		return Loader.default_loader(modpath, opts)
 	else
 		---@type function?, string?
@@ -133,7 +127,7 @@ Loader.init = function()
 
 	Loader.debug("default_loader", Loader.default_loader)
 	-- table.insert(package.loaders, 2, Loader.ulf_load)
-	loaders[2] = Loader.ulf_load
+	loaders[2] = Loader.load
 end
 
 Loader.get = function(k)
@@ -164,4 +158,43 @@ Loader.setup = function(ulf, opts)
 	Loader.ulf = ulf
 	return Loader
 end
+
+-- --- Prints all cache stats
+-- ---@param opts? {print?:boolean}
+-- ---@return LoaderStats
+-- ---@private
+-- function Loader._inspect(opts)
+--   if opts and opts.print then
+--     ---@private
+--     local function ms(nsec)
+--       return math.floor(nsec / 1e6 * 1000 + 0.5) / 1000 .. "ms"
+--     end
+--     local chunks = {} ---@type string[][]
+--     ---@type string[]
+--     local stats = vim.tbl_keys(Loader._stats)
+--     table.sort(stats)
+--     for _, stat in ipairs(stats) do
+--       vim.list_extend(chunks, {
+--         { "\n" .. stat .. "\n", "Title" },
+--         { "* total:    " },
+--         { tostring(Loader._stats[stat].total) .. "\n", "Number" },
+--         { "* time:     " },
+--         { ms(Loader._stats[stat].time) .. "\n", "Bold" },
+--         { "* avg time: " },
+--         { ms(Loader._stats[stat].time / Loader._stats[stat].total) .. "\n", "Bold" },
+--       })
+--       for k, v in pairs(Loader._stats[stat]) do
+--         if not vim.tbl_contains({ "time", "total" }, k) then
+--           chunks[#chunks + 1] = { "* " .. k .. ":" .. string.rep(" ", 9 - #k) }
+--           chunks[#chunks + 1] = { tostring(v) .. "\n", "Number" }
+--         end
+--       end
+--     end
+--     vim.api.nvim_echo(chunks, true, {})
+--   end
+--   return Loader._stats
+-- end
+--
+--
+
 return Loader
