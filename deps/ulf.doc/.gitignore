@@ -23,3 +23,7 @@ luac.out
 *.elf
 
 
+/luarocks
+/lua
+/lua_modules
+/.luarocks

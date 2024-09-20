@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p "$HOME/.luarocks-ulf/nlua/bin"
+cp "$HOME/.luarocks-ulf/bin/nlua" "$HOME/.luarocks-ulf/nlua/bin/lua"

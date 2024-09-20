@@ -116,3 +116,4 @@ end
 M.Cache = Cache
 M.loadfile = Package.loadfile
 M.new = Package.new
+return M

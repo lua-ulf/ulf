@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lua",
+            "path": "/opt/homebrew/Cellar/luarocks/3.11.1/share/lua/5.1/?.lua;/Users/al/dev/projects/ulf/lua_modules/share/lua/5.1/?.lua;/Users/al/dev/projects/ulf/lua_modules/share/lua/5.1/?/init.lua;/Users/al/.luarocks-ulf/share/lua/5.1/?.lua;/Users/al/.luarocks-ulf/share/lua/5.1/?/init.lua;/opt/homebrew/share/lua/5.1/?.lua;/opt/homebrew/share/lua/5.1/?/init.lua;/opt/homebrew/lib/lua/5.1/?.lua;/opt/homebrew/lib/lua/5.1/?/init.lua;./?.lua;./?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.async/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.async/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.core/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.core/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.doc/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.doc/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.lib/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.lib/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.log/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.log/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.luvit/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.luvit/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.sys/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.sys/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.test/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.test/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.util/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.util/lua/?/init.lua;/Users/al/dev/projects/ulf/deps/ulf.vim/lua/?.lua;/Users/al/dev/projects/ulf/deps/ulf.vim/lua/?/init.lua;/Users/al/dev/projects/ulf/../?/init.lua;/Users/al/.luarocks/share/lua/5.1/?.lua;/Users/al/.luarocks/share/lua/5.1/?/init.lua",
+            "cpath": "/Users/al/dev/projects/ulf/lua_modules/lib/lua/5.1/?.so;/Users/al/.luarocks-ulf/lib/lua/5.1/?.so;/opt/homebrew/lib/lua/5.1/?.so;/opt/homebrew/lib/lua/5.1/loadall.so;./?.so;/Users/al/.luarocks/lib/lua/5.1/?.so",
+            "request": "launch",
+            "name": "Debug",
+            "program": "${workspaceFolder}/spec/tests/debug_ulf.lua"
+        }
+    ]
+}

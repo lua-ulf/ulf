@@ -1,63 +1,31 @@
----@class ulfboot.debug
+---@class ulf.lib.debug
 local M = {}
 
 ---comment
 ---@param ... any
 function M.inspect(...)
-	-- ---@param ... any
-	-- local inspect = function(...)
-	-- 	local argv = { ... }
-	-- 	---@type string[]
-	-- 	local out = {}
-	-- 	for index, value in ipairs(argv) do
-	-- 		out[#out + 1] = tostring(index) .. " " .. tostring(value)
-	-- 	end
-	-- 	io.write(table.concat(out, " ") .. "\n")
-	-- 	io.flush()
-	-- 	error("inspect module not found")
-	-- end
-	-- if vim then
-	-- 	inspect = vim.inspect
-	-- else
-	-- 	local ok, mod = pcall(require, "ulf.lib.inspect") ---@diagnostic disable-line: no-unknown
-	-- 	if ok then
-	-- 		---@type fun(...)
-	-- 		inspect = mod
-	-- 	end
-	-- end
-	-- return inspect(...)
-	local ok, mod = pcall(require, "ulfboot.inspect") ---@diagnostic disable-line: no-unknown
-	if not ok then
-		error("inspect module not found")
-	end
-	return mod(...)
-end
-
----comment
----@param kind? 'path'|'cpath'|'all'
-function M.dump_lua_path(kind)
-	kind = kind or "path"
-
-	local path_kinds = kind == "all" and { "path", "cpath" } or { kind }
-
-	local _dump = function(k)
+	---@param ... any
+	local inspect = function(...)
+		local argv = { ... }
 		---@type string[]
 		local out = {}
-		local i = 1
-		for str in string.gmatch(package[k], "([^" .. ";" .. "]+)") do
-			out[#out + 1] = string.format("%02d: %s", i, str)
+		for index, value in ipairs(argv) do
+			out[#out + 1] = tostring(index) .. " " .. tostring(value)
 		end
-
-		print(table.concat(out, "\n"))
+		io.write(table.concat(out, " ") .. "\n")
+		io.flush()
+		error("[ulfboot.debug].inspect: inspect module not found")
 	end
-
-	print(string.rep(">", 80))
-	for _, k in ipairs(path_kinds) do
-		print(string.format("[ulf.doc.util.debug] dump_lua_path: %05s", k))
-		_dump(k)
-		print("\n")
+	if vim then
+		inspect = vim.inspect
+	else
+		local ok, mod = pcall(require, "inspect") ---@diagnostic disable-line: no-unknown
+		if ok then
+			---@type fun(...)
+			inspect = mod
+		end
 	end
-	print(string.rep("<", 80))
+	return inspect(...)
 end
 
 function M.debug_print(...)
@@ -79,11 +47,7 @@ function M.debug_print(...)
 
 	for i = 1 + offset, #argv, 1 do
 		local v = argv[i] ---@diagnostic disable-line: no-unknown
-		if v then
-			out[#out + 1] = tostring(i) .. " (" .. type(v) .. ") " .. require("ulfboot.inspect")(v)
-		else
-			out[#out + 1] = "~nil~"
-		end
+		out[#out + 1] = tostring(i) .. " (" .. type(v) .. ") " .. inspect(v)
 	end
 	io.write(table.concat(out, " ") .. "\n")
 	io.flush()
@@ -132,4 +96,5 @@ function M._G(env)
 	env.P = M.debug_print
 	env.pp = M.dump
 end
+
 return M

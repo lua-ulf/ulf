@@ -16,9 +16,8 @@ description = {
 dependencies = {
 	"lua >= 5.1",
 	"luv",
-	"luvit",
 	"inspect",
-	-- "luafilesystem",
+	-- "luvit",
 	-- "cjson", -- have problems to install under luajit
 	-- "dkjson",
 	-- "tabular",
@@ -44,6 +43,7 @@ test_dependencies = {
 	"busted",
 	"busted-htest",
 	"nlua",
+	"luafilesystem",
 	"luacov",
 	"luacov-html",
 	"luacov-multiple",

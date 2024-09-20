@@ -56,14 +56,16 @@ $(LUAROCKS_INIT): | $(TMP_DIR) ## Initializes local project
 
 # Ensure luarocks-test-prepare is only run once
 $(LUAROCKS_TEST_PREPARE): $(ROCKSPECS) | $(LUAROCKS_INIT) ## Installs all dependencies for testing (runs once)
-	@for rockspec in $^; do \
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks test --prepare ulf-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
+	for rockspec in $^; do \
 		echo "Preparing test for $$rockspec"; \
 		luarocks test --prepare $$rockspec; \
 	done
 	@touch $(TMP_DIR)/luarocks-test-prepare
 
 $(LUAROCKS_MAKE_LOCAL): $(ROCKSPECS) | $(LUAROCKS_INIT)  ## Installs all dependencies for the package (runs once)
-	@for rockspec in $^; do \
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks make --no-install --local ulf-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
+	for rockspec in $^; do \
 		echo "Installing locally for $$rockspec"; \
 		luarocks make --no-install --local $$rockspec; \
 	done
@@ -82,7 +84,7 @@ test-nvim: | $(TEST_DEPS) ## Executes all tests using Neovim as Lua interpreter
 	done
 
 test-ulf: | $(TEST_DEPS) ## Executes all API tests
-	ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh --run=$(BUSTED_TAG) spec/tests
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua ULF_TEST_INTERPRETER=luarocks ./scripts/run-tests.sh --run=$(BUSTED_TAG) spec/tests
 
 
 test-lua: | $(TEST_DEPS) ## Executes all tests using LuaJIT and Neovim as Lua interpreter

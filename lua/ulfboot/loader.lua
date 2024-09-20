@@ -122,10 +122,10 @@ end
 Loader.init = function()
 	local loaders = package.loaders or package.searchers
 
-	Loader.debug(string.format("loader.init: called"))
+	-- Loader.debug(string.format("loader.init: called"))
 	Loader.default_loader = loaders[2]
 
-	Loader.debug("default_loader", Loader.default_loader)
+	-- Loader.debug("default_loader", Loader.default_loader)
 	-- table.insert(package.loaders, 2, Loader.ulf_load)
 	loaders[2] = Loader.load
 end
@@ -139,14 +139,14 @@ end
 
 ---@param opts ulf.InitOptions
 Loader.stage2 = function(opts)
-	Loader.debug("loader.stage2 ENTER")
+	-- Loader.debug("loader.stage2 ENTER")
 end
 
 ---comment
 ---@param opts ulf.InitOptions
 ---@return fun(opts:ulf.InitOptions)
 Loader.stage1 = function(opts)
-	Loader.debug("loader.stage1 ENTER")
+	-- Loader.debug("loader.stage1 ENTER")
 end
 ---@class ulfboot.loader.Options
 
