@@ -1,149 +1,73 @@
+# Test Makefile for ULF
+#
+# TODO:
+# - targets luarocks-make-local and luarocks-test-prepare should only be
+#   run once
+# - add a clean target to remove all rocks and start cleanly
+#
+
 SHELL := /bin/bash
-DEPS ?= build
-COVERAGE_DIR ?= .tmp
 ROCKS_PACKAGE_VERSION := $(shell ./.rocks-version ver)
 ROCKS_PACKAGE_REVISION := $(shell ./.rocks-version rev)
+APPNAME := ulf.core
+BUSTED_VERSION := 2.2.0-1
+TMP_DIR := .tmp
 
-LUA_VERSION ?= luajit 2.1.0-beta3
-NVIM_BIN ?= nvim
-NVIM_LUA_VERSION := $(shell $(NVIM_BIN) -v 2>/dev/null | grep -E '^Lua(JIT)?' | tr A-Z a-z)
-# ifdef NVIM_LUA_VERSION
-# LUA_VERSION ?= $(NVIM_LUA_VERSION)
-# endif
-LUA_NUMBER := $(word 2,$(LUA_VERSION))
+LUAROCKS_INIT ?= $(TMP_DIR)/luarocks-init
+LUAROCKS_DEPS ?= $(TMP_DIR)/luarocks-deps
+LUAROCKS_TEST_PREPARE ?= $(TMP_DIR)/luarocks-test-prepare
+LUAROCKS_MAKE_LOCAL ?= $(TMP_DIR)/luarocks-make-local
+TEST_DEPS ?= $(TMP_DIR)/test-deps
+BUSTED_TAG ?= default
 
-TARGET_DIR := $(DEPS)/$(LUA_NUMBER)
 
-HEREROCKS ?= $(DEPS)/hererocks.py
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-HEREROCKS_ENV ?= MACOSX_DEPLOYMENT_TARGET=10.15
-endif
-HEREROCKS_URL ?= https://raw.githubusercontent.com/luarocks/hererocks/master/hererocks.py
-HEREROCKS_ACTIVE := source $(TARGET_DIR)/bin/activate
-
-LUAROCKS ?= $(TARGET_DIR)/bin/luarocks
-NLUA ?= $(TARGET_DIR)/bin/nlua
-
-BUSTED ?= $(TARGET_DIR)/bin/busted
-BUSTED_HELPER ?= $(PWD)/spec/busted_helper.lua
-COVERAGE_DIR_HELPER ?= $(PWD)/spec/busted_helper.lua
-
-LUAROCKS_DEPS ?= $(TARGET_DIR)/.deps_installed
-BUSTED_HTEST ?= $(TARGET_DIR)/lib/luarocks/rocks-5.1/busted-htest
-
-LUV ?= $(TARGET_DIR)/lib/lua/$(LUA_NUMBER)/luv.so
-
-LUA_LS ?= $(DEPS)/lua-language-server
-LINT_LEVEL ?= Information
-
-BUSTED_TAG ?= unit
-
-ifndef BUSTED_TAG
-override BUSTED_TAG = unit
-endif
-
+.PHONY: build test local lint luarocks-make-local luarocks-test-prepare luarocks-init test-deps clean
 .EXPORT_ALL_VARIABLES:
 
-help: ## show help message
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[$$()% a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
+help: ## Display this help screen
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 all: deps
 
-deps: | $(HEREROCKS) $(BUSTED) $(LUAROCKS_DEPS)
+deps: | $(TEST_DEPS)
 
-test_deps: $(BUSTED) $(LUV) $(LUAROCKS_DEPS)
+$(LUAROCKS_INIT): | $(TMP_DIR) ## Initializes local project
+	luarocks init
+	luarocks install --lua-version 5.1 busted $(BUSTED_VERSION)
+	luarocks install --lua-version 5.1 busted-htest
+	luarocks config --scope project lua_version 5.1
+	@touch $(TMP_DIR)/luarocks-init
 
-test: test_lua test_nvim
+# Ensure luarocks-test-prepare is only run once
+$(LUAROCKS_TEST_PREPARE): | $(LUAROCKS_INIT) ## Installs all dependencies for testing (runs once)
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks test --prepare $(APPNAME)-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
+	touch $(TMP_DIR)/luarocks-test-prepare
 
-# test_lua: $(BUSTED) $(LUV)
-# 	@echo Test with $(LUA_VERSION) tag=$(BUSTED_TAG) ......
-# 	@$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-# 		lua spec/init.lua --coverage --helper=$(BUSTED_HELPER) --run=$(BUSTED_TAG) -o htest spec/tests
-test_lua: test_deps $(TARGET_DIR)
-	@echo Test with $(LUA_VERSION) ......
-	@$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	busted --lua=$(TARGET_DIR)/bin/lua  --helper="$(BUSTED_HELPER)" --run=$(BUSTED_TAG) -o htest spec/tests
+$(LUAROCKS_MAKE_LOCAL): | $(LUAROCKS_INIT)  ## Installs all dependencies for the package (runs once)
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks make --no-install --local $(APPNAME)-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
+	touch $(TMP_DIR)/luarocks-make-local
 
+$(LUAROCKS_DEPS): | $(LUAROCKS_TEST_PREPARE) $(LUAROCKS_MAKE_LOCAL)
+	@touch $(TMP_DIR)/luarocks-deps
 
-coverage_clean: ## clean coverage data
-	rm -fr $(COVERAGE_DIR)
-	mkdir $(COVERAGE_DIR)
+$(TEST_DEPS): | $(LUAROCKS_DEPS)
+	@touch $(TMP_DIR)/test-deps
 
-coverage: coverage_clean ## run coverage
-	@echo coverage with $(LUA_VERSION) tag=$(BUSTED_TAG) ......
-	@$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-		busted --coverage --lua=$(TARGET_DIR)/bin/lua --helper=$(BUSTED_HELPER) --run=$(BUSTED_TAG) spec/tests/reload_spec.lua
+test-nvim: | $(TEST_DEPS) ## Executes all tests using Neovim as Lua interpreter
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua ULF_TEST_INTERPRETER=nvim ./scripts/run-tests.sh spec/tests
 
+test-lua: | $(TEST_DEPS) ## Executes all tests using LuaJIT and Neovim as Lua interpreter
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua ./scripts/run-tests.sh spec/tests
 
-test_nvim: $(BUSTED) $(LUV) $(NLUA)
-	@echo Test with $(LUA_VERSION) ......
-	@$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	busted --lua="$(NLUA)" --helper=spec/init.lua --run=$(BUSTED_TAG) -o htest spec/tests
-	# busted --lua=$(NLUA) --helper=spec/init.lua -o htest $(BUSTED_ARGS) spec/unit 
+test: test-nvim test-lua ## Test all ULF packages
+	@echo "Testing all modules"
 
+clean: ## Clean up all rocks and reset the environment
+	@echo "Cleaning up rocks and local installations..."
+	rm -f $(TMP_DIR)/*
+	rmdir $(TMP_DIR)
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks purge
 
-new-rocks-version: 
-	./.new-rocks-version
-
-rocks-version: 
-	$(info $(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION))
-
-pack:
-	$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-		luarocks pack ulf.core-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec "$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION)" 
-
-publish:
-	$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-		luarocks upload ulf.core-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec ulf.core--$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).src.rock  --api-key=$(LUAROCKS_API_KEY)
-
-
-
-$(COVERAGE_DIR):
-	mkdir $(COVERAGE_DIR)
-
-$(HEREROCKS):
-	mkdir -p $(DEPS)
-	curl $(HEREROCKS_URL) -o $@
-
-$(LUAROCKS): $(HEREROCKS)
-	$(HEREROCKS_ENV) python $< $(TARGET_DIR) --$(LUA_VERSION) -r latest
-
-$(BUSTED): $(LUAROCKS) $(COVERAGE_DIR)
-	$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	luarocks install busted
-
-$(BUSTED_HTEST): $(LUAROCKS)
-	$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	luarocks install busted-htest
-
-$(NLUA): $(LUAROCKS)
-	$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	luarocks install nlua
-
-$(LUAROCKS_DEPS): $(LUAROCKS) $(BUSTED_HTEST) $(NLUA)
-	@echo build for $(LUA_VERSION) $(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION) ......
-	@$(HEREROCKS_ACTIVE) && eval $$(luarocks path) && \
-	luarocks make ulf.core-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
-	luarocks test --prepare ulf.core-$(ROCKS_PACKAGE_VERSION)-$(ROCKS_PACKAGE_REVISION).rockspec && \
-	touch $(TARGET_DIR)/.deps_installed
-
-test-deps: $(LUAROCKS_DEPS)
-
-$(LUV): $(LUAROCKS)
-	@$(HEREROCKS_ACTIVE) && [[ ! $$(luarocks which luv) ]] && \
-		luarocks install luv || true
-#
-# lint:
-# 	@rm -rf $(LUA_LS)
-# 	@mkdir -p $(LUA_LS)
-# 	@lua-language-server --check $(PWD) --checklevel=$(LINT_LEVEL) --logpath=$(LUA_LS)
-# 	@grep -q '^\[\]\s*$$' $(LUA_LS)/check.json || (cat $(LUA_LS)/check.json && exit 1)
-#
-clean:
-	rm -rf $(DEPS)
-
-.PHONY: all deps clean lint test test_nvim test_lua rocks-version new-rocks-version
-#
+$(TMP_DIR):
+	@mkdir -p $(TMP_DIR)
 

@@ -11,8 +11,6 @@ ROCKS_PACKAGE_VERSION := $(shell ./.rocks-version ver)
 ROCKS_PACKAGE_REVISION := $(shell ./.rocks-version rev)
 APPNAME := ulf.doc
 BUSTED_VERSION := 2.2.0-1
-DEPS_DIR := deps
-ROCKSPECS := $(wildcard $(DEPS_DIR)/*/*scm-1.rockspec)
 TMP_DIR := .tmp
 
 LUAROCKS_INIT ?= $(TMP_DIR)/luarocks-init
@@ -21,21 +19,6 @@ LUAROCKS_TEST_PREPARE ?= $(TMP_DIR)/luarocks-test-prepare
 LUAROCKS_MAKE_LOCAL ?= $(TMP_DIR)/luarocks-make-local
 TEST_DEPS ?= $(TMP_DIR)/test-deps
 BUSTED_TAG ?= default
-
-# Target packages
-#
-# TODO:
-# - Each package should have its own test setup, including
-#   Makefile and test scripts
-# - Iterate over packages and call local test
-# - ULF_DEPS_TODO is just a reminder variable
-#
-ULF_DEPS_TODO := ulf.async ulf.core ulf.doc ulf.lib ulf.log ulf.sys ulf.test ulf.util
-# Packages tested with LuaJIT and Neovim
-ULF_DEPS := ulf.lib ulf.core ulf.doc
-# Packages tested with Neovim only
-ULF_DEPS_NEOVIM := ulf.vim
-
 
 .PHONY: build test local lint luarocks-make-local luarocks-test-prepare luarocks-init test-deps clean
 .EXPORT_ALL_VARIABLES:
@@ -82,8 +65,7 @@ clean: ## Clean up all rocks and reset the environment
 	@echo "Cleaning up rocks and local installations..."
 	rm -f $(TMP_DIR)/*
 	rmdir $(TMP_DIR)
-	# luarocks remove --force $(APPNAME) || true
-	# rm -rf $(DEPS_DIR)/*/luarocks || true
+	LUAROCKS_CONFIG=./.luarocks/config-5.1.lua luarocks purge
 
 $(TMP_DIR):
 	@mkdir -p $(TMP_DIR)
