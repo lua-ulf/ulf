@@ -10,7 +10,7 @@
 
 local string = string
 
----@class ulf.loader
+---@class ulf._loader.Loader
 ---@field ['package'] {loaded:any}
 ---@field ulf ulf
 local Loader = {
@@ -18,15 +18,6 @@ local Loader = {
 	_stats = {
 		find = { total = 0, time = 0, not_found = 0 },
 	},
-	debug = function(msg)
-		local inspect = require("ulfboot.inspect")
-
-		if type(msg) ~= "string" then
-			msg = inspect(msg)
-		end
-		io.write(msg .. "\n")
-		io.flush()
-	end,
 }
 
 local function split(inputstr, sep)
@@ -40,22 +31,19 @@ local function split(inputstr, sep)
 	return t
 end
 
----@class ulf.InitOptions
----@field dev boolean set development mode (default off)
-
 ---@class ulf._libdata
 ---@field available {[string]:string}
 local _libdata = {}
 
 local uv = vim and vim.uv or require("luv")
 local unpack = unpack or table.unpack
-local Config = require("ulfboot.config")
+-- local Config = require("ulf._loader.config")
 
 ---@return ulf.config.Packages
 local function packages_list()
 	---@type string[]
 	local packs = {}
-	for pack_name, pack_conf in pairs(Config.packages.global) do
+	for pack_name, pack_conf in pairs(Loader.Config.packages.global) do
 		if pack_conf.enabled then
 			packs[pack_name] = pack_conf
 		end
@@ -98,18 +86,19 @@ Loader.default_loader = nil
 ---@private
 function Loader.load(modpath, opts)
 	local start = uv.hrtime()
-	Loader.track("load", start)
+	-- Loader.track("load", start)
+	-- Loader.Debug.debug_print(string.format("loader.load: %s", modpath))
 
 	opts = opts or {}
 	local elem = split(modpath)
 
-	if not (elem and elem[1] == "ulf") then
+	if (not (elem and elem[1] == "ulf")) or (elem and #elem > 1 and elem[1] == "ulf" and elem[2] == "_loader") then
 		return Loader.default_loader(modpath, opts)
 	else
 		---@type function?, string?
 		local mod, err
-		local Package = require("ulfboot.package")
-		local mod, err = Package.loadfile(modpath)
+		-- local Package = require("ulf._loader.package")
+		local mod, err = Loader.Package.loadfile(modpath)
 		if not mod then
 			return nil, err
 		end
@@ -152,9 +141,19 @@ end
 
 ---comment
 ---@param ulf ulf
----@param opts ulfboot.loader.Options
-Loader.setup = function(ulf, opts)
-	assert(ulf, "Loader.setup: ulf must not be nil")
+---@param package ulf._loader.package
+---@param config ulf.config
+Loader.setup = function(ulf, package, config)
+	P({
+		"Loader.setup>>>>>>>>>>>>>>>",
+		opts = opts,
+		ulf = ulf,
+	})
+	assert(type(ulf) == "table", "[ulf._loader.loader].Loader.setup: ulf must be a table")
+	-- assert(type(opts) == "table", "[ulf._loader.loader].Loader.setup: opts must be a table")
+
+	Loader.Package = package
+	Loader.Config = config
 	Loader.ulf = ulf
 	return Loader
 end

@@ -40,9 +40,6 @@ local function split(inputstr, sep)
 	return t
 end
 
----@class ulf.InitOptions
----@field dev boolean set development mode (default off)
-
 ---@class ulf._libdata
 ---@field available {[string]:string}
 local _libdata = {}

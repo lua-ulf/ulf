@@ -52,13 +52,11 @@ M.defaults = defaults
 ---@type ulf.config.ConfigOptions
 local options
 
----@param loader ulf.loader
 ---@param opts? ulf.config.ConfigOptions
 ---@return ulf.config.ConfigOptions
-function M.setup(loader, opts)
+function M.setup(opts)
 	options = minilib.tbl_deep_extend("force", defaults, opts or {}) or {}
 
-	loader.init()
 	return options
 end
 

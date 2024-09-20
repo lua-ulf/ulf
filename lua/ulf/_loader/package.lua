@@ -1,3 +1,4 @@
+---@class ulf._loader.package
 local M = {}
 ---@class ulf.package.Meta
 ---@field name string
