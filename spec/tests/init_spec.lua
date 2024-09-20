@@ -68,7 +68,7 @@ describe("#ulf module tests", function()
 	end)
 
 	it("checks that ulfboot.package is loaded", function()
-		local Package = require("ulf._loader.package")
+		local Package = require("ulf.core").package
 		assert.Table(ulf._)
 		assert.Table(ulf._.package)
 		assert.Table(ulf._.package.loaded)

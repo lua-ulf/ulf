@@ -1,7 +1,11 @@
 ---@class ulf.config : ulf.config.ConfigOptions
 local M = {}
 
-local minilib = require("ulf.core.mods.minilib")
+---@type ulf.core
+local core = require("ulf.core")
+
+---@type ulf.core.minilib
+local minilib = require("ulf.core").minilib
 
 ---@class ulf.config.PackageOption
 ---@field enabled boolean
@@ -53,11 +57,11 @@ M.defaults = defaults
 local options
 
 ---@param opts? ulf.config.ConfigOptions
----@return ulf.config.ConfigOptions
+---@return ulf.config
 function M.setup(opts)
 	options = minilib.tbl_deep_extend("force", defaults, opts or {}) or {}
 
-	return options
+	return M
 end
 
 ---@type ulf.config.ConfigOptions

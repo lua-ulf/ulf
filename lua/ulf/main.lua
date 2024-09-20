@@ -79,7 +79,7 @@ local function init(opts)
 		local argv = { ... }
 		print("not impl")
 	end
-	ulf.api.loader.init(opts)
+	ulf.api.loader.init()
 
 	return setmetatable(ulf, {
 		__index = ulf.meta.__index,

@@ -25,7 +25,7 @@ assert(minilib)
 local doc = require("ulf.doc")
 local lib = require("ulf.lib")
 
-local Package = require("ulf._loader.package")
+local Package = require("ulf.core").package
 P({
 	"ulf._.package.loaded",
 	ulf._.package.loaded["lib"],

@@ -8,7 +8,8 @@
 ---@tag ulf.core
 ---@config { ["name"] = "ULF.CORE" }
 ---
----@type ulf.core
+
+---@type ulf.core.exports
 local M = { ---@diagnostic disable-line: missing-fields
 
 	package = {
@@ -24,7 +25,7 @@ local M = { ---@diagnostic disable-line: missing-fields
 		inspect = true,
 	},
 }
----@class ulf.core
+---@class ulf.core.exports
 ---@field argsutil ulf.core.argsutil
 ---@field debug ulf.core.debug
 ---@field json ulf.core.json

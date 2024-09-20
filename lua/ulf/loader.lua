@@ -10,8 +10,8 @@
 
 local string = string
 
----@class ulf._loader.Loader
----@field ['package'] {loaded:any}
+---@class ulf.loader
+---@field Config ulf.config
 ---@field ulf ulf
 local Loader = {
 	---@type ulf.loader.LoaderCache
@@ -20,6 +20,10 @@ local Loader = {
 	},
 }
 
+---comment
+---@param inputstr string
+---@param sep? string
+---@return string[]
 local function split(inputstr, sep)
 	if sep == nil then
 		sep = "%."
@@ -31,8 +35,8 @@ local function split(inputstr, sep)
 	return t
 end
 
----@class ulf._libdata
----@field available {[string]:string}
+---@class _libdata
+---@field  available {packages:{[string]:ulf.config.PackageOption}}
 local _libdata = {}
 
 local uv = vim and vim.uv or require("luv")
@@ -41,9 +45,11 @@ local unpack = unpack or table.unpack
 
 ---@return ulf.config.Packages
 local function packages_list()
-	---@type string[]
+	---@type {[string]:table}
 	local packs = {}
-	for pack_name, pack_conf in pairs(Loader.Config.packages.global) do
+	for pack_name, pack_conf in
+		pairs(Loader.Config.packages.global --[[ @as {[string]:table}  ]])
+	do
 		if pack_conf.enabled then
 			packs[pack_name] = pack_conf
 		end
@@ -81,7 +87,6 @@ Loader.default_loader = nil
 ---@param opts? {mode?: "b"|"t"|"bt", env?:table} (table|nil) Options for loading the module:
 ---    - mode: (string) the mode to load the module with. "b"|"t"|"bt" (defaults to `nil`)
 ---    - env: (table) the environment to load the module in. (defaults to `nil`)
----@see |luaL_loadfile()|
 ---@return function?, string? error_message
 ---@private
 function Loader.load(modpath, opts)
@@ -119,6 +124,9 @@ Loader.init = function()
 	loaders[2] = Loader.load
 end
 
+---comment
+---@param k string
+---@return table?
 Loader.get = function(k)
 	local v = _libdata.available.packages[k]
 	if v and v.enabled then
@@ -128,74 +136,31 @@ end
 
 ---@param opts ulf.InitOptions
 Loader.stage2 = function(opts)
-	-- Loader.debug("loader.stage2 ENTER")
+	print("loader.stage2 ENTER")
 end
 
 ---comment
 ---@param opts ulf.InitOptions
 ---@return fun(opts:ulf.InitOptions)
 Loader.stage1 = function(opts)
-	-- Loader.debug("loader.stage1 ENTER")
+	print("loader.stage1 ENTER")
+	return Loader.stage2
 end
 ---@class ulfboot.loader.Options
 
 ---comment
 ---@param ulf ulf
----@param package ulf._loader.package
+---@param package ulf.core.package
 ---@param config ulf.config
 Loader.setup = function(ulf, package, config)
-	P({
-		"Loader.setup>>>>>>>>>>>>>>>",
-		-- ulf = ulf,
-		package = package,
-	})
 	assert(type(ulf) == "table", "[ulf.loader].setup: ulf must be a table")
 	assert(type(package) == "table", "[ulf.loader].setup: package must be a table")
 	assert(type(config) == "table", "[ulf.loader].setup: config must be a table")
-	-- assert(type(opts) == "table", "[ulf._loader.loader].Loader.setup: opts must be a table")
 
 	Loader.Package = package
 	Loader.Config = config
 	Loader.ulf = ulf
 	return Loader
 end
-
--- --- Prints all cache stats
--- ---@param opts? {print?:boolean}
--- ---@return LoaderStats
--- ---@private
--- function Loader._inspect(opts)
---   if opts and opts.print then
---     ---@private
---     local function ms(nsec)
---       return math.floor(nsec / 1e6 * 1000 + 0.5) / 1000 .. "ms"
---     end
---     local chunks = {} ---@type string[][]
---     ---@type string[]
---     local stats = vim.tbl_keys(Loader._stats)
---     table.sort(stats)
---     for _, stat in ipairs(stats) do
---       vim.list_extend(chunks, {
---         { "\n" .. stat .. "\n", "Title" },
---         { "* total:    " },
---         { tostring(Loader._stats[stat].total) .. "\n", "Number" },
---         { "* time:     " },
---         { ms(Loader._stats[stat].time) .. "\n", "Bold" },
---         { "* avg time: " },
---         { ms(Loader._stats[stat].time / Loader._stats[stat].total) .. "\n", "Bold" },
---       })
---       for k, v in pairs(Loader._stats[stat]) do
---         if not vim.tbl_contains({ "time", "total" }, k) then
---           chunks[#chunks + 1] = { "* " .. k .. ":" .. string.rep(" ", 9 - #k) }
---           chunks[#chunks + 1] = { tostring(v) .. "\n", "Number" }
---         end
---       end
---     end
---     vim.api.nvim_echo(chunks, true, {})
---   end
---   return Loader._stats
--- end
---
---
 
 return Loader

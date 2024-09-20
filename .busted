@@ -9,9 +9,9 @@ return {
 	default = {
 		tags = {
 			"tests",
-			"ulfboot",
+			"ulf",
 		},
-		output = "htest",
+		-- output = "htest",
 		verbose = true,
 	},
 	tests = {
@@ -19,8 +19,8 @@ return {
 		verbose = true,
 	},
 
-	ulfboot = {
-		tags = { "ulfboot" },
+	ulf = {
+		tags = { "ulf" },
 		verbose = true,
 	},
 }
