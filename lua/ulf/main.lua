@@ -25,7 +25,11 @@
 
 ---@class ulf.InitOptions
 ---@field dev? boolean set development mode (default off)
----@field loader ulf.Loader
+---@field config ulf.config
+---@field get_loader fun(ulf:ulf,package:ulf.core.package,config:ulf.config)
+---@field package ulf.core.package
+---@field debug ulf.core.debug
+---@field inspect ulf.core.inspect
 
 ---@class ulf._internal @internals
 
@@ -36,7 +40,7 @@ end
 ---@param opts ulf.InitOptions
 ---@return ulf
 local function init(opts)
-	local Config = opts.loader.Config.setup({})
+	local Config = opts.config.setup({})
 
 	---@class ulf
 	---@field api ulf.api
@@ -44,7 +48,7 @@ local function init(opts)
 	local ulf = {
 		_ = {
 
-			package = { loaded = opts.loader.Package.Cache },
+			package = { loaded = opts.package.Cache },
 		},
 		uv = vim and vim.uv or require("luv"),
 		api = {
@@ -60,7 +64,7 @@ local function init(opts)
 		},
 	}
 	_G.ulf = ulf
-	ulf.api.loader = opts.loader.get_loader(ulf, opts.loader.Package, opts.loader.Config)
+	ulf.api.loader = opts.get_loader(ulf, opts.package, opts.config)
 
 	---@class _ulf.metatable
 	ulf.meta = {}
@@ -84,15 +88,12 @@ local function init(opts)
 end
 
 local function assert_init_options(opts)
-	assert(type(opts.loader) == "table", "[ulf.main].assert_init_options: opts.loader must be a table")
-	assert(type(opts.loader.Config) == "table", "[ulf.main].assert_init_options: opts.loader.Config must be a table")
-	assert(
-		type(opts.loader.get_loader) == "function",
-		"[ulf.main].assert_init_options: opts.loader.get_loader must be a function"
-	)
-	assert(type(opts.loader.Debug) == "table", "[ulf.main].assert_init_options: opts.loader.Debug must be a table")
-	assert(type(opts.loader.Package) == "table", "[ulf.main].assert_init_options: opts.loader.Package must be a table")
-	assert(type(opts) == "table", "[ulf._loader.loader].Loader.setup: opts must be a table")
+	assert(type(opts) == "table", "[ulf.main].assert_init_options: opts must be a table")
+	assert(type(opts.config) == "table", "[ulf.main].assert_init_options: opts.config must be a table")
+	assert(type(opts.get_loader) == "function", "[ulf.main].assert_init_options: opts.get_loader must be a function")
+	assert(type(opts.debug) == "table", "[ulf.main].assert_init_options: opts.debug must be a table")
+	assert(type(opts.package) == "table", "[ulf.main].assert_init_options: opts.package must be a table")
+	assert(type(opts.inspect) == "table", "[ulf.main].assert_init_options: opts.inspect must be a table")
 end
 
 return {
@@ -100,7 +101,7 @@ return {
 	---@return ulf
 	init = function(opts)
 		assert_init_options(opts)
-		opts.loader.Debug._G()
+		opts.debug._G()
 		return init(opts)
 	end,
 }

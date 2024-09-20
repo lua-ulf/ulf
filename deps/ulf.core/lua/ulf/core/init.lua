@@ -18,12 +18,18 @@ local M = { ---@diagnostic disable-line: missing-fields
 	modules = {
 		json = true,
 		argsutil = true,
+		debug = true,
 		minilib = true,
+		package = true,
+		inspect = true,
 	},
 }
 ---@class ulf.core
 ---@field argsutil ulf.core.argsutil
+---@field debug ulf.core.debug
 ---@field json ulf.core.json
+---@field inspect ulf.core.inspect
+---@field package ulf.core.package
 ---@field minilib ulf.core.minilib
 return setmetatable(M, {
 	__index = function(t, k)

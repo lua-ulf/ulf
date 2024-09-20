@@ -1,4 +1,4 @@
----@class ulf.lib.debug
+---@class ulf.core.debug
 local M = {}
 
 ---comment
@@ -14,18 +14,45 @@ function M.inspect(...)
 		end
 		io.write(table.concat(out, " ") .. "\n")
 		io.flush()
-		error("[ulfboot.debug].inspect: inspect module not found")
+		error("inspect module not found")
 	end
 	if vim then
 		inspect = vim.inspect
 	else
-		local ok, mod = pcall(require, "inspect") ---@diagnostic disable-line: no-unknown
+		local ok, mod = pcall(require, "ulf.core.mods.inspect") ---@diagnostic disable-line: no-unknown
 		if ok then
 			---@type fun(...)
 			inspect = mod
 		end
 	end
 	return inspect(...)
+end
+
+---comment
+---@param kind? 'path'|'cpath'|'all'
+function M.dump_lua_path(kind)
+	kind = kind or "path"
+
+	local path_kinds = kind == "all" and { "path", "cpath" } or { kind }
+
+	local _dump = function(k)
+		---@type string[]
+		local out = {}
+		local i = 1
+		for str in string.gmatch(package[k], "([^" .. ";" .. "]+)") do
+			out[#out + 1] = string.format("%02d: %s", i, str)
+		end
+
+		print(table.concat(out, "\n"))
+	end
+
+	print(string.rep(">", 80))
+	for _, k in ipairs(path_kinds) do
+		print(string.format("[ulf.doc.util.debug] dump_lua_path: %05s", k))
+		_dump(k)
+		print("\n")
+	end
+	print(string.rep("<", 80))
 end
 
 function M.debug_print(...)
@@ -96,5 +123,4 @@ function M._G(env)
 	env.P = M.debug_print
 	env.pp = M.dump
 end
-
 return M

@@ -146,10 +146,12 @@ end
 Loader.setup = function(ulf, package, config)
 	P({
 		"Loader.setup>>>>>>>>>>>>>>>",
-		opts = opts,
-		ulf = ulf,
+		-- ulf = ulf,
+		package = package,
 	})
-	assert(type(ulf) == "table", "[ulf._loader.loader].Loader.setup: ulf must be a table")
+	assert(type(ulf) == "table", "[ulf.loader].setup: ulf must be a table")
+	assert(type(package) == "table", "[ulf.loader].setup: package must be a table")
+	assert(type(config) == "table", "[ulf.loader].setup: config must be a table")
 	-- assert(type(opts) == "table", "[ulf._loader.loader].Loader.setup: opts must be a table")
 
 	Loader.Package = package

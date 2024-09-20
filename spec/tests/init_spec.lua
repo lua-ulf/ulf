@@ -16,7 +16,7 @@ local packages = {
 }
 local busted = require("busted")
 
-describe("#ulf #ulfboot module tests", function()
+describe("#ulf module tests", function()
 	local ulf = require("ulf")
 
 	it("checks that ulf module is loaded and global", function()
@@ -68,7 +68,7 @@ describe("#ulf #ulfboot module tests", function()
 	end)
 
 	it("checks that ulfboot.package is loaded", function()
-		local Package = require("ulfboot.package")
+		local Package = require("ulf._loader.package")
 		assert.Table(ulf._)
 		assert.Table(ulf._.package)
 		assert.Table(ulf._.package.loaded)

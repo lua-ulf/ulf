@@ -363,7 +363,7 @@ function inspect.inspect(root, options)
 	return table.concat(inspector.buf)
 end
 
----@class ulf.log.Inspect
+---@class ulf.core.inspect
 ---@overload fun(...):string
 setmetatable(inspect, {
 	---comment
@@ -376,5 +376,5 @@ setmetatable(inspect, {
 	end,
 })
 
----@type ulf.log.Inspect
+---@type ulf.log.inspect
 return inspect

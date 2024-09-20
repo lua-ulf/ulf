@@ -9,7 +9,7 @@ return {
 		return require("ulf._loader.loader").setup(ulf, package, config)
 	end,
 
-	Package = require("ulf._loader.package"),
-	Debug = require("ulf._loader.debug"),
-	Inspect = require("ulf._loader.inspect"),
+	Package = require("ulf.core").package,
+	Debug = require("ulf.core").debug,
+	Inspect = require("ulf.core").inspect,
 }

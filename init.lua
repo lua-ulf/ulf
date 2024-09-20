@@ -1,14 +1,17 @@
--- local Core = require("ulfboot")
--- return Core
--- require("ulf._loader.debug")._G()
+---@type ulf.InitOptions
+local config = {
+	config = require("ulf.config"),
+	---comment
+	---@param ulf ulf
+	---@param package ulf.core.package
+	---@param config ulf.config
+	get_loader = function(ulf, package, config)
+		return require("ulf.loader").setup(ulf, package, config)
+	end,
 
-local loader = require("ulf._loader")
-
-local ulf = require("ulf.main").init({
-	loader = require("ulf._loader"),
-})
+	package = require("ulf.core.mods.package"),
+	debug = require("ulf.core").debug,
+	inspect = require("ulf.core").inspect,
+}
+local ulf = require("ulf.main").init(config)
 return ulf
--- P(1)
-
--- local Core = require("ulf.core.loader")
--- return Core
