@@ -103,7 +103,7 @@ function Loader.load(modpath, opts)
 		---@type function?, string?
 		local mod, err
 		-- local Package = require("ulf._loader.package")
-		local mod, err = Loader.Package.loadfile(modpath)
+		local mod, err = Loader.Package.load(modpath, #elem == 2)
 		if not mod then
 			return nil, err
 		end

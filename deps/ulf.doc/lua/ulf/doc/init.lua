@@ -10,8 +10,11 @@
 local M = {
 
 	package = {
-		name = "lua-ulf/ulf.doc@0.1.0",
-		version = "0.1.0",
+		meta = {
+
+			name = "lua-ulf/ulf.doc@0.1.0",
+			version = "0.1.0",
+		},
 	},
 	setup = require("ulf.doc.config").setup,
 }

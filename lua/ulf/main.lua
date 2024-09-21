@@ -71,6 +71,7 @@ local function init(opts)
 
 	ulf.meta.__index = function(t, k)
 		local pack = ulf.api.loader.get(k)
+		P(k, pack)
 		rawset(t, k, pack)
 		return pack
 	end
@@ -81,6 +82,7 @@ local function init(opts)
 	end
 	ulf.api.loader.init()
 
+	ulf.api.logger.info("ulf loaded")
 	return setmetatable(ulf, {
 		__index = ulf.meta.__index,
 		__call = ulf.meta.__call,

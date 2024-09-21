@@ -1,11 +1,8 @@
 ---@class ulf.config : ulf.config.ConfigOptions
 local M = {}
 
----@type ulf.core
-local core = require("ulf.core")
-
----@type ulf.core.minilib
-local minilib = require("ulf.core").minilib
+-- use full path to module because loader is not yet active
+local minilib = require("ulf.core.mods.minilib")
 
 ---@class ulf.config.PackageOption
 ---@field enabled boolean

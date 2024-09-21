@@ -83,7 +83,7 @@ _defaults.writer = {
 
 	stdout = {
 		enabled = true,
-		severity = Severity.levels.DEBUG,
+		severity = Severity.levels.ERROR,
 	},
 }
 

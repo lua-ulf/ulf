@@ -2,8 +2,11 @@
 return {
 
 	package = {
-		name = "lua-ulf/ulf.log@0.1.0",
-		version = "0.1.0",
+		meta = {
+
+			name = "lua-ulf/ulf.log@0.1.0",
+			version = "0.1.0",
+		},
 	},
 	severity = require("ulf.log.severity"),
 	-- get = require("ulf.log.manager").get,

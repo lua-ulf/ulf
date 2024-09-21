@@ -16,6 +16,7 @@ assert(luv)
 assert(luv._loop)
 
 local core = require("ulf.core")
+P(core)
 assert(core)
 assert(core.minilib)
 
@@ -26,10 +27,10 @@ local doc = require("ulf.doc")
 local lib = require("ulf.lib")
 
 local Package = require("ulf.core").package
-P({
-	"ulf._.package.loaded",
-	ulf._.package.loaded["lib"],
-})
+-- P({
+-- 	"ulf._.package.loaded",
+-- 	ulf._.package.loaded["lib"],
+-- })
 
 local util = ulf.util
 assert(util)

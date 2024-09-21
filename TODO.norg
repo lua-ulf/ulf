@@ -32,13 +32,13 @@
     --- ( ) Review defaults
     --- ( ) refactor setup so that it can called multiple times
 
-
 *** Bootstrap Library (minilib)
 
     We need a small library which provides functions for loading the framework.
     See ulf.doc, ulf.log which all use some utils which can be bundled.
 
     - ( ) Bootstrap tasks
+    -- ( ) relocate all libs to ulf.lib and import stuff from there
     -- ( ) provide functions for loading modules.
            Take a look at luvit, they have this stuff implemented.
     --- ( ) table manipulation: merging, copying
@@ -46,4 +46,16 @@
 
 **** ulf.doc
 
+*** ulf.lib
 
+    ulf.lib contains all shared functions and classes used by ulf. I would 
+    like to use a pattern where each function or class has its own lua file.
+    This makes it easier to maintain especially when importing code from
+    other repositories.
+
+
+    - ( ) Create ulf.lib 
+    -- ( ) setup core library structure
+    -- ( ) setup build: import from other repos and rewrite annotations
+
+ 

@@ -10,8 +10,8 @@ local config = {
 	end,
 
 	package = require("ulf.core.mods.package"),
-	debug = require("ulf.core").debug,
-	inspect = require("ulf.core").inspect,
+	debug = require("ulf.core.mods.debug"),
+	inspect = require("ulf.core.mods.inspect"),
 }
 local ulf = require("ulf.main").init(config)
 return ulf

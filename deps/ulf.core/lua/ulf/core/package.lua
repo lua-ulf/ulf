@@ -1,5 +1,6 @@
+---@type ulf.PackageMeta
 return {
-	name = "lua-ulf/ulf.core@0.1.0-1",
+	name = "ulf.core",
 	version = "0.1.0",
 	license = "Apache 2",
 	homepage = "http://github.com/lua-ulf/ulf.core",

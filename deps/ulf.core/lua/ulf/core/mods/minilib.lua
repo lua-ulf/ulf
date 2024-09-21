@@ -10,6 +10,16 @@
 ---
 ---@class ulf.core.minilib
 local minilib = {}
+
+local imports = {
+	string = require("ulf.core.mods._minilib.string"),
+}
+
+minilib.trim = imports.string.trim
+minilib.strlen = imports.string.strlen
+minilib.gsplit = imports.string.gsplit
+minilib.split = imports.string.split
+
 local NIL = vim and vim.NIL or "\0"
 
 local uv = vim and vim.uv or require("luv")
