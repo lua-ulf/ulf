@@ -10,6 +10,7 @@ return {
 		tags = {
 			"tests",
 			"ulf",
+			"ulf.lib",
 		},
 		output = "htest",
 		verbose = true,
@@ -21,6 +22,10 @@ return {
 
 	ulf = {
 		tags = { "ulf" },
+		verbose = true,
+	},
+	["ulf.lib"] = {
+		tags = { "ulf.lib" },
 		verbose = true,
 	},
 }

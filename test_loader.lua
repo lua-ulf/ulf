@@ -34,6 +34,14 @@ local util = ulf.util
 assert(util)
 assert(ulf._.package.loaded.util)
 
+local _table = ulf.lib.table
+local spairs = ulf.lib.table.spairs
+
+P({
+	"ulf.lib.table",
+	_table or "~nil",
+	-- spairs = spairs or "~nil",
+})
 local try1 = require("ulf.lib.func.try")
 -- local func = ulf.lib.func
 -- local func_lib = require("ulf.lib.func")

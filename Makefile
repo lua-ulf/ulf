@@ -29,6 +29,8 @@ LUAROCKS ?= $(TARGET_DIR)/bin/luarocks
 
 BUSTED ?= $(TARGET_DIR)/bin/busted
 BUSTED_HELPER ?= $(PWD)/spec/fixtures.lua
+BUSTED_TAG=ulf
+BUSTED_OUTPUT=htest
 
 LUV ?= $(TARGET_DIR)/lib/lua/$(LUA_NUMBER)/luv.so
 
@@ -46,7 +48,7 @@ test: test_lua test_nvim
 test-lua: $(BUSTED) $(LUV)
 	@echo Test with $(LUA_VERSION) ......
 	@$(HEREROCKS_ACTIVE) && eval $$($(LUAROCKS) path) && \
-		$(LUAROCKS) test -- spec/tests
+		$(LUAROCKS) test -- --run=$(BUSTED_TAG) --output=$(BUSTED_OUTPUT) spec/tests
 
 ifdef NVIM_LUA_VERSION
 test.nvim: $(BUSTED)

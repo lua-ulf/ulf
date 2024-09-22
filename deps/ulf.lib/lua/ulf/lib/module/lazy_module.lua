@@ -4,6 +4,7 @@
 ---@return table The module with the lazy loading metatable applied
 local function lazy_module(module, base_path)
 	setmetatable(module, {
+		__name = base_path,
 		__index = function(t, k)
 			local path = base_path .. "." .. k
 			local ok, mod = pcall(require, path)
