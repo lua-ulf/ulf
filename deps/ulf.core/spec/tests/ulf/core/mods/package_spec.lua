@@ -59,8 +59,12 @@ describe("#ulf.core", function()
 						name = "ulf.core_test",
 						version = "0.1.0",
 					},
-					modules = {
-						cache = true,
+					export = {
+
+						prefix = "mods",
+						modules = {
+							cache = true,
+						},
 					},
 				}
 
@@ -85,7 +89,11 @@ describe("#ulf.core", function()
 							name = "ulf.core_test",
 							version = "0.1.0",
 						},
-						modules = { cache = true },
+						export = {
+							modules = {
+								cache = true,
+							},
+						},
 					},
 				}
 

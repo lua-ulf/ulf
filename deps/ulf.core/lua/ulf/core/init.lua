@@ -21,13 +21,17 @@ local M = { ---@diagnostic disable-line: missing-fields
 
 	package = {
 		meta = require("ulf.core.package"),
-		modules = {
-			json = true,
-			argsutil = true,
-			debug = true,
-			minilib = true,
-			package = true,
-			inspect = true,
+		export = {
+
+			prefix = "mods",
+			modules = {
+				json = true,
+				argsutil = true,
+				debug = true,
+				minilib = true,
+				package = true,
+				inspect = true,
+			},
 		},
 	},
 }

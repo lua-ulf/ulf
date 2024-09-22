@@ -12,7 +12,7 @@ return {
 			"ulf",
 			"ulf.core",
 		},
-		-- output = "htest",
+		output = "htest",
 		verbose = true,
 		ROOT = { "spec/tests" },
 	},

@@ -2,10 +2,17 @@
 local M = {
 
 	package = {
-		meta = {
+		meta = require("ulf.lib.package"),
+		export = {
 
-			name = "lua-ulf/ulf.lib@0.1.0",
-			version = "0.1.0",
+			modules = {
+				string = { enabled = true },
+				table = { enabled = true },
+				func = { enabled = true },
+				module = { enabled = true },
+				fs = { enabled = true },
+				error = { enabled = true },
+			},
 		},
 	},
 }

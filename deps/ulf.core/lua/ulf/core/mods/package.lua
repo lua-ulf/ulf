@@ -82,11 +82,11 @@ local Meta = {}
 ---@type ulf.core.package.Meta
 M.Meta = Meta
 
----@class ulf.core.PackageModuleSpec @Specification for a package module.
+---@class ulf.core.package.PackageModuleConfig @Specification for a package module.
 ---@field name? string The optional name of the module.
 ---@field enabled boolean Whether the module is enabled.
 
----@alias ulf.core.PackageModule ulf.core.PackageModuleSpec|boolean
+---@alias ulf.core.package.PackageModuleSpec ulf.core.package.PackageModuleConfig|boolean
 
 local minilib = require("ulf.core.mods.minilib")
 
@@ -135,9 +135,13 @@ function Cache.unregister(modpath)
 	end
 end
 
+---@class ulf.core.package.PackageExportSpec @Describes the package specification.
+---@field prefix string prefix path to modules
+---@field modules? {[string]:ulf.PackageModule} Dictionary of modules the package provides
+
 ---@class ulf.core.package.PackageSpec @Describes the package specification.
 ---@field meta ulf.core.package.Meta Meta information of this package
----@field modules? {[string]:ulf.PackageModule} Dictionary of modules the package provides
+---@field export? ulf.core.package.PackageExportSpec Export specification
 M.PackageDefaults = {}
 
 ---@class ulf.core.package.Package @Represents a package with its metadata and modules.
@@ -145,8 +149,6 @@ M.PackageDefaults = {}
 ---@field path string The file path to the module
 ---@field modpath string The Lua module path (dotted)
 ---@field module any The endpoint of the actual module
----@field meta ulf.core.package.Meta
----@field modules? {[string]:ulf.PackageModule}
 local Package = {}
 
 ---@type ulf.core.package.Package
@@ -204,8 +206,11 @@ function Package.validate(modpath, module)
 	assert(type(module) == "table", err_text("module"))
 	assert(type(module.package) == "table", err_text("module.package"))
 	assert(type(module.package.meta) == "table", err_text("module.package.meta"))
-	if module.modules then
-		assert(type(module.modules) == "table", err_text("module.modules"))
+	if module.package.export then
+		if module.package.export.prefix then
+			assert(type(module.package.export.prefix) == "string", err_text("module.export.prefix"))
+		end
+		assert(type(module.package.export.modules) == "table", err_text("module.export.modules"))
 	end
 end
 
@@ -215,30 +220,66 @@ end
 ---@return table
 M.set_module_metatable = function(modpath, module)
 	return setmetatable(module, {
+		__name = modpath,
 		__index = function(t, k)
+			print(string.format("[%s].__index: k=%s", modpath, k))
 			local v = rawget(t, k)
 			if v then
 				return v
 			end
 
-			---@type ulf.core.package.Package
+			---@type ulf.core.package.PackageSpec
 			local package_spec = rawget(t, "package")
-			local modules = package_spec.modules
+			local export = package_spec.export
+			-- local package_spec = rawget(t, "package")
+
+			if type(export) ~= "table" then
+				return
+			end
+
+			local modules = export.modules
 			if type(modules) ~= "table" then
 				return
 			end
-			local v = modules[k]
+
+			local prefix = export.prefix and ("." .. export.prefix .. ".") or "."
+
+			---@type ulf.core.package.PackageModuleSpec
+			v = modules[k]
+
+			---@type string
+			local destpath = modpath .. prefix .. k
+
+			print(string.format("[%s].__index: destpath=%s prefix=%s", modpath, destpath, prefix))
 			if v then
-				-- P("ulf.core.__index", v, k)
-				local ok, mod = pcall(require, modpath .. ".mods." .. k) ---@diagnostic disable-line: no-unknown
-				-- P(ok, mod)
+				local ok, mod = pcall(require, destpath) ---@diagnostic disable-line: no-unknown
 				if ok then
-					rawset(t, k, mod)
 					return mod
 				end
 			end
 		end,
 	})
+end
+
+--- Finds the path of an ulf package
+---@param modpath string The path to the module file.
+---@return boolean @returns true if the modpath is the path of an ulf package
+---@return string[]
+function M.is_ulf_package(modpath)
+	---list of lua module path elements
+	---@type string[]
+	local elem = minilib.split(modpath, "%.", { native = true })
+
+	---TODO: handle error
+	if not elem then
+		return false
+	end
+
+	if #elem == 2 and elem[1] == "ulf" then
+		-- if (not (elem and elem[1] == "ulf")) or (elem and #elem > 1 and elem[1] == "ulf" and elem[2] == "_loader") then
+		return true, elem
+	end
+	return false, elem
 end
 
 --- Loads a package from a file and returns the package module.
@@ -248,7 +289,7 @@ end
 ---@return ulf.core.package.Package? @The loaded package.
 ---@return string? @error text
 function Package.load(modpath, is_root, opts)
-	print(string.format("Package.loadfile: %s", modpath))
+	print(string.format("[ulf.core.package].Package.loadfile: %s", modpath))
 	local pack = Package.new(modpath)
 	local loader = loadfile(pack.path)
 
@@ -260,16 +301,19 @@ function Package.load(modpath, is_root, opts)
 	local module = loader()
 	if is_root then
 		Package.validate(modpath, module)
-		module = M.set_module_metatable(modpath, module)
+		-- module = M.set_module_metatable(modpath, module)
+		module = require("ulf.lib.module.lazy_exports_module")(module, module.package.export, modpath)
+	else
+		print(string.format("[ulf.core.package].Package.load: not a root module modpath=%s", modpath))
 	end
 
 	pack.module = module
 	local name = modpath:match("ulf%.(%w+)%.*.*")
-	P({
-		module = module,
-		pack = pack,
-		modpath = modpath,
-	})
+	-- P({
+	-- 	module = module,
+	-- 	pack = pack,
+	-- 	modpath = modpath,
+	-- })
 	Cache.register(name, pack)
 	return pack.module
 end

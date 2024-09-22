@@ -42,6 +42,13 @@ end
 local function init(opts)
 	local Config = opts.config.setup({})
 
+	-- local function register_logger()
+	-- 	require("ulf.log").register("ulf", Config.logging)
+	-- 	---@type ulf.ILogManager
+	-- 	local Logger = require("ulf.logger")
+	-- 	return Logger
+	-- end
+
 	---@class ulf
 	---@field api ulf.api
 	---@field _ ulf._internal
@@ -55,6 +62,7 @@ local function init(opts)
 			-- process = {},
 			init = function(opts) end,
 			config = Config,
+			-- logger = register_logger(),
 			logger = (function()
 				require("ulf.log").register("ulf", Config.logging)
 				---@type ulf.ILogManager
@@ -71,7 +79,6 @@ local function init(opts)
 
 	ulf.meta.__index = function(t, k)
 		local pack = ulf.api.loader.get(k)
-		P(k, pack)
 		rawset(t, k, pack)
 		return pack
 	end

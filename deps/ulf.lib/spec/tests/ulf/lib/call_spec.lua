@@ -31,7 +31,7 @@ describe("#ulf.lib", function()
 		before_each(function()
 			uv.os_homedir.returns("/home/test")
 		end)
-		local Call = require("ulf.lib.call")
+		local Call = require("ulf.lib").func.call
 		describe("try", function()
 			it("catches an error if no handler is given", function()
 				local failed = function()

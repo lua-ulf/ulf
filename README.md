@@ -8,7 +8,6 @@ dependencies.
 
 `ULF` is a library for `Lua`, `LuaJIT`, and `Neovim`, providing modules common development tasks.
 
-
 ## Repository Management
 
 ### Adding a Project
@@ -22,4 +21,16 @@ git subtree add --prefix deps/ulf.log ulf-log-upstream main --squash
 
 # 3 push
 git subtree push --prefix=deps/ulf.log ulf-log-upstream main
+```
+
+## Documentation
+
+ULF can be used in any supported Lua runtime environment. Let's import and see
+what we can do.
+
+```lua
+-- load ulf library to the global namespace
+require("ulf")
+
+print(ulf.version)
 ```

@@ -1,13 +1,13 @@
 ---@class apipe.lib.call
 local M = {}
 
-local pretty_trace = require("ulf.lib.trace").pretty_trace
+local pretty_trace = require("ulf.lib.error.trace").pretty_trace
 
 ---@generic R
 ---@param fn fun():R?
 ---@param opts? string|{msg:string, on_error:fun(msg)}
 ---@return R
-function M.try(fn, opts)
+local function try(fn, opts)
 	opts = type(opts) == "string" and { msg = opts } or opts or {}
 	local msg = opts.msg
 
@@ -31,4 +31,4 @@ function M.try(fn, opts)
 	local ok, result = xpcall(fn, error_handler)
 	return ok and result or nil
 end
-return M
+return try

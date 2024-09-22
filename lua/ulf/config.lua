@@ -29,6 +29,11 @@ local defaults = {
 			{
 				name = "ulf",
 				icon = "👽",
+				writer = {
+					stdout = { level = "error" },
+					fs = { level = "debug" },
+				},
+				enabled = true,
 			},
 		},
 	},

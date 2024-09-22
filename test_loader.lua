@@ -16,7 +16,6 @@ assert(luv)
 assert(luv._loop)
 
 local core = require("ulf.core")
-P(core)
 assert(core)
 assert(core.minilib)
 
@@ -24,7 +23,6 @@ local minilib = require("ulf.core.mods.minilib")
 assert(minilib)
 
 local doc = require("ulf.doc")
-local lib = require("ulf.lib")
 
 local Package = require("ulf.core").package
 -- P({
@@ -35,3 +33,16 @@ local Package = require("ulf.core").package
 local util = ulf.util
 assert(util)
 assert(ulf._.package.loaded.util)
+
+local try1 = require("ulf.lib.func.try")
+-- local func = ulf.lib.func
+-- local func_lib = require("ulf.lib.func")
+local try2 = ulf.lib.func.try
+local catch = ulf.lib.func.catch
+P({
+	"AAAAAAAAAAAAAAAAAAA",
+	-- func = func,
+	try1 = try1,
+	try2 = try2 or "nil",
+	catch = catch,
+})

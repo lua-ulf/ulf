@@ -21,11 +21,15 @@ return {
 				"!lit-*",
 			},
 		},
-		modules = {
+		export = {
 
-			func = { enabled = true },
-			object = { enabled = true },
-			cache = true,
+			prefix = "mods",
+			modules = {
+
+				func = { enabled = true },
+				object = { enabled = true },
+				cache = true,
+			},
 		},
 	},
 }

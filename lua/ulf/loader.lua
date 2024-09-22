@@ -82,6 +82,10 @@ end
 
 Loader.default_loader = nil
 
+local function symbol_full_name(mod, sym)
+	return string.format("[ulf.%s].%s", mod, sym)
+end
+
 --- Loads the given module path using the cache
 ---@param modpath string
 ---@param opts? {mode?: "b"|"t"|"bt", env?:table} (table|nil) Options for loading the module:
@@ -90,16 +94,22 @@ Loader.default_loader = nil
 ---@return function?, string? error_message
 ---@private
 function Loader.load(modpath, opts)
+	print(symbol_full_name("loader.Load", "load") .. " called with: " .. modpath)
+	-- Loader.ulf.api.logger.debug("test")
 	local start = uv.hrtime()
 	-- Loader.track("load", start)
 	-- Loader.Debug.debug_print(string.format("loader.load: %s", modpath))
 
 	opts = opts or {}
-	local elem = split(modpath)
 
-	if (not (elem and elem[1] == "ulf")) or (elem and #elem > 1 and elem[1] == "ulf" and elem[2] == "_loader") then
-		return Loader.default_loader(modpath, opts)
-	else
+	---list of lua module path elements
+	---TODO: rewrite using fp with filter
+	---@type string[]
+	-- local elem = split(modpath)
+	local is_ulf_package, elem = Loader.Package.is_ulf_package(modpath)
+
+	if is_ulf_package then
+		-- if (not (elem and elem[1] == "ulf")) or (elem and #elem > 1 and elem[1] == "ulf" and elem[2] == "_loader") then
 		---@type function?, string?
 		local mod, err
 		-- local Package = require("ulf._loader.package")
@@ -110,6 +120,9 @@ function Loader.load(modpath, opts)
 		return function(name)
 			return mod
 		end
+	else
+		print(symbol_full_name("loader.Load", "load") .. " redirect to default_loader: " .. modpath)
+		return Loader.default_loader(modpath, opts)
 	end
 end
 

@@ -40,6 +40,7 @@ end
 ---@param severity ulf.log.SeverityLevelType
 ---@param record ulf.log.Record
 function M.dispatch(logger, context, severity, record)
+	-- P(logger)
 	for key, writer_config in pairs(logger.writer) do ---@diagnostic disable-line: no-unknown
 		---@type ulf.log.IWriter
 		local w = M.get_writer(logger, key)
